@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.boschrexroth.com/ctrlx-automation/ctrlx-core/apps/package-manifest/package-manifest.v1.schema.json",
+  "version": "1.0.0",
+  "id": "ctrlx-node-red-flowforge",
+  "certificatestores": [
+    {
+      "id": "node-RED",
+      "title": "Node-RED",
+      "description": "Node-RED certificate store"
+    }
+  ],
+  "services": {
+    "proxyMapping": [
+      {
+        "name": "ctrlx-node-red-flowforge.web",
+        "url": "/node-red",
+        "binding": ":1881",
+        "options": [
+          {
+            "option": "websocket",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "name": "ctrlx-node-red-flowforge.agent",
+        "url": "/node-red-agent",
+        "binding": "unix://{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/ctrlx-node-red-flowforge.agent.sock"
+      }
+    ]
+  },
+  "commands": {
+    "activeConfiguration": {
+      "load": [
+        {
+          "id": "node-red",
+          "subject": "Node-RED flows",
+          "url": "/node-red-agent/load",
+          "execution": {
+            "method": "POST",
+            "url": "/node-red-agent/load"
+          }
+        }
+      ]
+    }
+  },
+  "scopes-declaration": [
+    {
+      "identifier": "ctrlx-node-red-flowforge.web",
+      "name": "Node-Red",
+      "description": "Node-Red permissions",
+      "scopes": [
+        {
+          "identifier": "ctrlx-node-red-flowforge.web.rwx",
+          "name": "Manage Node-Red ",
+          "description": ""
+        },
+        {
+          "identifier": "ctrlx-node-red-flowforge.web.r",
+          "name": "View Node-Red",
+          "description": ""
+        }
+      ]
+    }
+  ],
+  "menus": {
+    "sidebar": [
+      {
+        "id": "node-red",
+        "title": "Node-RED",
+        "icon": "ctrlx-ic-node-red",
+        "permissions": [],
+        "items": [
+          {
+            "id": "node-red-admin",
+            "title": "Flow Editor",
+            "link": "/node-red",
+            "target": "node-red-admin",
+            "permissions": []
+          },
+          {
+            "id": "flowforge-support",
+            "title": "Node-RED support request",
+            "link": "https://flowforge.com/support/",
+            "target": "flowforge-support",
+            "permissions": []
+          },
+          {
+            "id": "node-red-dashboard",
+            "title": "Dashboard",
+            "link": "/node-red/ui",
+            "target": "node-red-dashboard",
+            "permissions": []
+          }
+        ]
+      }
+    ],
+    "settings": [],
+    "overview": [
+      {
+        "id": "node-red-dashboard",
+        "title": "Node-RED Dashboard",
+        "icon": "ctrlx-ic-node-red",
+        "link": "/node-red/ui",
+        "target": "node-red-dashboard",
+        "permissions": []
+      }
+    ]
+  },
+  "configuration": {
+    "appDirectories": [
+      {
+        "name": "node-RED",
+        "description": "Node-RED",
+        "icon": "bosch-ic-directory",
+        "scopes": [],
+        "copyOnLoad": true
+      }
+    ]
+  }
+}

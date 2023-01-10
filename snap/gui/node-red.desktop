@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Node-RED
+Comment=Low-code programming for event-driven applications
+Exec=node-red.desktop-launch
+Icon=${SNAP}/meta/gui/node-red.png
+Terminal=false
+Categories=Development;

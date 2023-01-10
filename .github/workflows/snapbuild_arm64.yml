@@ -1,0 +1,21 @@
+name: snapbuild_arm64
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - 
+      name: Build snap for arm64
+      id: arm64-build
+      uses: boschrexroth/ctrlx-actions/build-snap@v1
+      with: 
+          architecture: arm64
+    -
+      name: Upload
+      uses: actions/upload-artifact@v3
+      with:
+          name: snap-arm64
+          path: ${{steps.arm64-build.outputs.path-snap}}

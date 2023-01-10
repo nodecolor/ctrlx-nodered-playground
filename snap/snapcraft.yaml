@@ -1,0 +1,186 @@
+name: ctrlx-node-red-flowforge
+adopt-info: node-red
+summary: Node-RED managed by FlowForge
+description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see http://nodered.org
+confinement: strict
+grade: stable
+base: core20
+icon: snap/gui/node-red.png
+
+# Limit architectures as ppcel64 doesn't build currently
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+
+apps:
+
+  node-red:
+    command: bin/startNR
+    daemon: simple
+    restart-condition: on-failure
+    passthrough:
+      restart-delay: 30s
+    plugs:
+      - audio-playback
+      - bluez
+      - bluetooth-control
+      - camera
+      - network-bind
+      - network
+      - network-observe
+      - pulseaudio
+      - serial-port
+      - removable-media
+      - active-solution
+      # - licensing-service
+      - home
+    slots:
+      - package-run
+      - package-assets
+      - package-certificates
+
+  npm:
+    command: bin/npm
+    plugs:
+      - home
+      - network
+
+  desktop-launch:
+    command: bin/desktop-launch
+    plugs:
+      - desktop
+
+parts:
+  node: # We dump in a specific version of node/npm from upstream.
+    plugin: dump
+    source:
+      - on amd64: https://nodejs.org/dist/v14.19.1/node-v14.19.1-linux-x64.tar.gz
+      - on arm64: https://nodejs.org/dist/v14.19.1/node-v14.19.1-linux-arm64.tar.gz
+  node-red:
+    after: [node]
+    plugin: nil # We use the nil plugin so we can fully override the build with whatever we need to do
+    source: .
+    build-environment:
+    # AUDITING CONTROL
+      - AUDIT_ENABLED: "1"  #0|1
+      - AUDIT_LEVEL: "high" #low|moderate|high|critical
+
+    #stage-packages:
+    #  - python
+    build-packages:
+      - libatomic1
+    override-build: | # Whatever steps needed to install node-red into the install folder, which gets incorporated into the snap
+      PATH=$PATH:../npm/bin
+      
+      # setup npm
+      npm config set unsafe-perm True
+      
+      # clean cache
+      npm cache verify
+
+      # install node-red
+      npm install --no-audit --no-fund --prefix $SNAPCRAFT_PART_INSTALL/lib node-red 
+
+      # install factory shipped node-red plugins
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-debugger
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install nrlint
+      npx nrlint --init > $SNAPCRAFT_PART_INSTALL/lib/.nrlintrc.js
+
+      # install factory shipped library nodes
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-ping 
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-random 
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-serialport 
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-dashboard 
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-ctrlx-automation
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-tools-plugin
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-theme
+
+      # install auth module
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/node-red-auth-ctrlx-automation | tail -1)
+      
+      # modify node_modules
+      find $SNAPCRAFT_PART_INSTALL -type f -name '*.js.swp' -delete
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name test -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name doc -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name example -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name sample -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -iname benchmark* -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -iname .nyc_output -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -iname unpacked -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name man* -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name tst -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -iname demo -prune -exec rm -rf {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -name bench.gnu -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -name .npmignore -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -name .travis.yml -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -name .jshintrc -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname README.md -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname HISTORY.md -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname CONTRIBUTING.md -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname CHANGE*.md -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname .gitmodules -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname .gitattributes -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname .gitignore -exec rm -f {} \;
+      find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type f -iname "*~" -exec rm -f {} \;
+      
+      # create package.json
+      cd $SNAPCRAFT_PART_INSTALL/lib
+      npm init --yes
+
+      #set snap version
+      VER=$(npm show node-red version)
+      echo "VERSION $(npm show node-red version)"
+      snapcraftctl set-version $VER
+  settings:
+    plugin: dump
+    source: snap/local/settings # snapcraft now prefers local parts to be in snap/local
+    organize:
+      start.sh: "bin/startNR"
+      desktop-launch: "bin/desktop-launch"
+  configs:
+   source: ./configs
+   plugin: dump
+   organize:
+      'package-assets/*': package-assets/${SNAPCRAFT_PROJECT_NAME}/
+#  licensechecker:
+#    plugin: dump
+#    source:
+#      - on arm64: ./private/dependencies/web.common.licensing/public/bin/linux_arm64/release/
+#      - on amd64: ./private/dependencies/web.common.licensing/public/bin/linux_amd64/release/
+#    organize:
+#      '*': bin/
+#  startup:
+#    source: ./configs
+#    plugin: dump
+#    organize:
+#      'licensing.json': bin/
+
+slots:
+  package-run:
+    interface: content
+    content: package-run
+    source:
+      write:
+      - $SNAP_DATA/package-run/${SNAPCRAFT_PROJECT_NAME}
+  package-assets:
+    interface: content
+    content: package-assets
+    source:
+      read:
+      - $SNAP/package-assets/${SNAPCRAFT_PROJECT_NAME}
+  package-certificates:
+    interface: content
+    content: package-certificates
+    source:
+     write: 
+     - $SNAP_COMMON/package-certificates/${SNAPCRAFT_PROJECT_NAME}
+      
+plugs:
+  active-solution:
+    interface: content
+    content: solutions
+    target: $SNAP_DATA/solutions
+#  licensing-service:
+#      interface: content
+#      content: licensing-service
+#      target: $SNAP_DATA/licensing-service
