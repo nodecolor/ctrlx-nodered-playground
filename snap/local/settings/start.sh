@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-if [ -z "$PORT" ]; then PORT=1880; fi
+if [ -z "$PORT" ]; then PORT=1881; fi
 export PORT
 
 # settings.js search hierarchy: Active Configuration -> $SNAP_DATA -> $SNAP
