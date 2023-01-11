@@ -375,7 +375,7 @@ module.exports = {
          */
         theme: "forge-light",
         header: {
-            title: "Node-RED for ctrlX by FlowForge"
+            title: "Node-RED for CtrlX by FlowForge"
         },
 
         /** To disable the 'Welcome to Node-RED' tour that is displayed the first
