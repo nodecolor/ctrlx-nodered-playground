@@ -47,17 +47,17 @@
   "scopes-declaration": [
     {
       "identifier": "ctrlx-node-red-flowforge.web",
-      "name": "Node-Red",
-      "description": "Node-Red permissions",
+      "name": "Node-RED",
+      "description": "Node-RED permissions",
       "scopes": [
         {
           "identifier": "ctrlx-node-red-flowforge.web.rwx",
-          "name": "Manage Node-Red ",
+          "name": "Manage Node-RED ",
           "description": ""
         },
         {
           "identifier": "ctrlx-node-red-flowforge.web.r",
-          "name": "View Node-Red",
+          "name": "View Node-RED",
           "description": ""
         }
       ]

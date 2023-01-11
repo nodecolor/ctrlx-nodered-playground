@@ -3,7 +3,7 @@
         "address" : "/node-red",
         "binding": ":1881",
         "materialNumber": "R911399092",
-        "appName": "ctrlX CORE - Node-Red App",
+        "appName": "CtrlX CORE - Node-RED App",
         "licenseName": "SWL-XCx-RED-NODExREDxxxxx-NNNN",
         "version": "1.0"
     }

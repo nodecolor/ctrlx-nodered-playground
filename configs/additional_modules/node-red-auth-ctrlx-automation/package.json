@@ -1,6 +1,6 @@
 {
   "name": "node-red-auth-ctrlx-automation",
-  "description": "Authentication plugin for ctrlX automation",
+  "description": "Authentication plugin for CtrlX automation",
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
