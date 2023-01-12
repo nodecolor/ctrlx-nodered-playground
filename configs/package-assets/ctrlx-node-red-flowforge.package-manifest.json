@@ -4,7 +4,7 @@
   "id": "ctrlx-node-red-flowforge",
   "certificatestores": [
     {
-      "id": "node-RED",
+      "id": "node-red",
       "title": "Node-RED",
       "description": "Node-RED certificate store"
     }
@@ -110,7 +110,7 @@
   "configuration": {
     "appDirectories": [
       {
-        "name": "node-RED",
+        "name": "node-red",
         "description": "Node-RED",
         "icon": "bosch-ic-directory",
         "scopes": [],
