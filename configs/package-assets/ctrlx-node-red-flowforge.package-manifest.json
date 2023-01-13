@@ -117,5 +117,13 @@
         "copyOnLoad": true
       }
     ]
-  }
+  },
+  "licenses": [
+    {
+      "name": "SWL-XCx-RED-NODExREDxxxxx-NNNN",
+      "title": "Node-RED by FlowForge License",
+      "description": "Unlock the App's functionality.",
+      "required": true
+    }
+  ]
 }

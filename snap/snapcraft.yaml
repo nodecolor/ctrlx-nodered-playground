@@ -32,7 +32,7 @@ apps:
       - serial-port
       - removable-media
       - active-solution
-      # - licensing-service
+      - licensing-service
       - home
     slots:
       - package-run
@@ -168,7 +168,7 @@ slots:
     content: package-assets
     source:
       read:
-      - $SNAP/package-assets/${SNAPCRAFT_PROJECT_NAME}
+        - $SNAP/package-assets/${SNAPCRAFT_PROJECT_NAME}
   package-certificates:
     interface: content
     content: package-certificates
@@ -181,7 +181,7 @@ plugs:
     interface: content
     content: solutions
     target: $SNAP_DATA/solutions
-#  licensing-service:
-#      interface: content
-#      content: licensing-service
-#      target: $SNAP_DATA/licensing-service
+  licensing-service:
+      interface: content
+      content: licensing-service
+      target: $SNAP_DATA/licensing-service
