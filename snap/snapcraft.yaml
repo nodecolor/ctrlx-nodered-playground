@@ -143,18 +143,18 @@ parts:
    plugin: dump
    organize:
       'package-assets/*': package-assets/${SNAPCRAFT_PROJECT_NAME}/
-#  licensechecker:
-#    plugin: dump
-#    source:
-#      - on arm64: ./private/dependencies/web.common.licensing/public/bin/linux_arm64/release/
-#      - on amd64: ./private/dependencies/web.common.licensing/public/bin/linux_amd64/release/
-#    organize:
-#      '*': bin/
-#  startup:
-#    source: ./configs
-#    plugin: dump
-#    organize:
-#      'licensing.json': bin/
+  licensechecker:
+    plugin: dump
+    source:
+      - on arm64: ./private/dependencies/web.common.licensing/public/bin/linux_arm64/release/
+      - on amd64: ./private/dependencies/web.common.licensing/public/bin/linux_amd64/release/
+    organize:
+      '*': bin/
+  startup:
+    source: ./configs
+    plugin: dump
+    organize:
+      'licensing.json': bin/
 
 slots:
   package-run:
