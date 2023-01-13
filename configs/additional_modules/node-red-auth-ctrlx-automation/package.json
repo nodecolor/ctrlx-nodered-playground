@@ -5,7 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "jwt-decode": "^3.1.2",
-    "https": "^1.0.0"
+    "https": "^1.0.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {},
   "main": "./user-authentication.js"

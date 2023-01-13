@@ -1,4 +1,5 @@
-var api = require('./authentication-api.js');
+const api = require('./authentication-api.js');
+const ctrlx = require('./ctrlx-license.js');
 
 module.exports = {
   type: 'credentials',
@@ -10,18 +11,35 @@ module.exports = {
   //tokenHeader: 'Bearer',
 
   users: function (username) {
-    return new Promise(function (resolve) {
+    return new Promise(async function (resolve) {
       // Do whatever work is needed to check username is a valid
       // user.
       valid = true;
       if (valid) {
-        // Resolve with the user object. It must contain
-        // properties 'username' and 'permissions'
-        var user = {
-          username: username,
-          permissions: '*'
-        };
-        resolve(user);
+        //check license
+        isValid = await ctrlx.checkLicense();
+        if (!isValid) {
+          console.log('License is invalid. Acquiring a new license...');
+          const license = await ctrlx.acquireLicense();
+          if (license.status === 'success') {
+            console.log('License acquired successfully');
+            var user = {
+              username: username,
+              permissions: '*',
+            };
+            resolve(user);
+          } else {
+            console.log(`Failed to acquire license: ${license.message}`);
+            resolve(null);
+          }
+        }
+        if (isValid) {
+          var user = {
+            username: username,
+            permissions: '*',
+          };
+          resolve(user);
+        }
       } else {
         // Resolve with null to indicate this user does not exist
         resolve(null);
@@ -33,7 +51,7 @@ module.exports = {
       // Do whatever work is needed to check token is valid
       api.validate(token, (user) => {
         resolve(user);
-      })
+      });
     });
   },
   authenticate: function (username, password) {
@@ -42,7 +60,7 @@ module.exports = {
       // combination.
       api.authenticate(username, password, (user) => {
         resolve(user);
-      })
+      });
     });
   },
   default: function () {
@@ -52,5 +70,5 @@ module.exports = {
       // resolve({anonymous: true, permissions:'read'});
       resolve(null);
     });
-  }
-}
+  },
+};
