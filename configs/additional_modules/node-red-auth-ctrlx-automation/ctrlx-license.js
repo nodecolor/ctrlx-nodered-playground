@@ -2,7 +2,7 @@ const https = require('https');
 
 module.exports = {
   checkLicense: async (username, password) => {
-    const apiKey = await getToken(username, password);
+    let apiKey = await getToken(username, password);
     return new Promise((resolve, reject) => {
       https
         .get(
@@ -21,9 +21,9 @@ module.exports = {
               });
               res.on('end', () => {
                 try {
-                  const licenses = JSON.parse(data);
+                  let licenses = JSON.parse(data);
                   // Find the license with the name "SWL-XCx-RED-NODExREDxxxxx-NNNN"
-                  const license = licenses.find(
+                  let license = licenses.find(
                     (lic) => lic.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN'
                   );
                   if (license) {
@@ -47,9 +47,9 @@ module.exports = {
   },
 
   acquireLicense: async (username, password) => {
-    const apiKey = await getToken(username, password);
+    let apiKey = await getToken(username, password);
     return new Promise((resolve, reject) => {
-      const options = {
+      let options = {
         hostname: 'localhost',
         path: '/license',
         method: 'POST',
@@ -58,7 +58,7 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
-      const req = https.request(options, (res) => {
+      let req = https.request(options, (res) => {
         if (res.statusCode === 200) {
           resolve(true);
         } else {
@@ -80,7 +80,7 @@ module.exports = {
 
   getToken: async (username, password) => {
     return new Promise((resolve, reject) => {
-      const options = {
+      let options = {
         hostname: 'localhost',
         path: '/identity-manager/api/v1/auth/token',
         method: 'POST',
@@ -88,9 +88,9 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
-      const req = https.request(options, (res) => {
+      let req = https.request(options, (res) => {
         res.on('data', (data) => {
-          const body = JSON.parse(data);
+          let body = JSON.parse(data);
           resolve(body.access_token);
         });
       });
