@@ -4,24 +4,45 @@ module.exports = {
   checkLicense: async (username, password) => {
     const apiKey = await getToken(username, password);
     return new Promise((resolve, reject) => {
-      https.get(
-        {
-          hostname: 'localhost',
-          path: '/license-manager/api/v1/capabilities',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
+      https
+        .get(
+          {
+            hostname: 'localhost',
+            path: '/license-manager/api/v1/capabilities',
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+            },
           },
-        },
-        (res) => {
-          if (res.statusCode === 200) {
-            resolve(true);
-          } else {
-            resolve(false);
+          (res) => {
+            let data = '';
+            if (res.statusCode === 200) {
+              res.on('data', (chunk) => {
+                data += chunk;
+              });
+              res.on('end', () => {
+                try {
+                  const licenses = JSON.parse(data);
+                  // Find the license with the name "SWL-XCx-RED-NODExREDxxxxx-NNNN"
+                  const license = licenses.find(
+                    (lic) => lic.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN'
+                  );
+                  if (license) {
+                    resolve(true);
+                  } else {
+                    resolve(false);
+                  }
+                } catch (err) {
+                  reject(err);
+                }
+              });
+            } else {
+              resolve(false);
+            }
           }
-        }
-      ).on('error', (err) => {
-        reject(err);
-      });
+        )
+        .on('error', (err) => {
+          reject(err);
+        });
     });
   },
 
