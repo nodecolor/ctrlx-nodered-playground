@@ -39,7 +39,7 @@ module.exports = {
       });
     } else {
       console.log('License is invalid. Acquiring a new license...');
-      const license = ctrlx.acquireLicense(username, password);
+      let license = ctrlx.acquireLicense(username, password);
       if (license) {
         console.log('License acquired successfully');
         api.authenticate(username, password, (user) => {

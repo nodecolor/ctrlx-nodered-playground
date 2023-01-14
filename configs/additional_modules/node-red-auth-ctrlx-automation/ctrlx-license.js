@@ -79,30 +79,38 @@ module.exports = {
   },
 
   getToken: async (username, password) => {
+    var data = JSON.stringify({
+      name: username,
+      password: password,
+    });
+
+    var options = {
+      hostname: 'localhost',
+      path: '/identity-manager/api/v2/auth/token',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length,
+      },
+    };
+
     return new Promise((resolve, reject) => {
-      let options = {
-        hostname: 'localhost',
-        path: '/identity-manager/api/v1/auth/token',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
       let req = https.request(options, (res) => {
-        res.on('data', (data) => {
-          let body = JSON.parse(data);
-          resolve(body.access_token);
+        res.on('data', (d) => {
+          try {
+            let jsonObject = JSON.parse(d);
+            resolve(jsonObject.access_token);
+          } catch (err) {
+            console.log(err);
+            reject(err);
+          }
         });
       });
       req.on('error', (err) => {
-        resolve(false);
+        console.log(err);
+        reject(err);
       });
-      req.write(
-        JSON.stringify({
-          name: username,
-          password: password,
-        })
-      );
+      req.write(data);
       req.end();
     });
   },
