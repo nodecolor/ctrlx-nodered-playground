@@ -1,79 +1,88 @@
-const request = require('request');
+const https = require('https');
 
 module.exports = {
   checkLicense: async (username, password) => {
     const apiKey = await getToken(username, password);
     return new Promise((resolve, reject) => {
-      request.get(
+      https.get(
         {
-          url: `https://localhost/license-manager/api/v1/capabilities`,
+          hostname: 'localhost',
+          path: '/license-manager/api/v1/capabilities',
           headers: {
             Authorization: `Bearer ${apiKey}`,
           },
         },
-        (err, response, body) => {
-          if (err) {
-            reject(err);
+        (res) => {
+          if (res.statusCode === 200) {
+            resolve(true);
           } else {
-            if (response.statusCode === 200) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
+            resolve(false);
           }
         }
-      );
+      ).on('error', (err) => {
+        reject(err);
+      });
     });
   },
 
   acquireLicense: async (username, password) => {
     const apiKey = await getToken(username, password);
     return new Promise((resolve, reject) => {
-      request.post(
-        {
-          url: `https://localhost/license`,
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          json: {
-            name: 'SWL-XCx-RED-NODExREDxxxxx-NNNN',
-            version: '1.0',
-          },
+      const options = {
+        hostname: 'localhost',
+        path: '/license',
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
         },
-        (err, response, body) => {
-          if (err) {
-            reject(err);
-          } else {
-            if (response.statusCode === 200) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          }
+      };
+      const req = https.request(options, (res) => {
+        if (res.statusCode === 200) {
+          resolve(true);
+        } else {
+          resolve(false);
         }
+      });
+      req.on('error', (err) => {
+        reject(err);
+      });
+      req.write(
+        JSON.stringify({
+          name: 'SWL-XCx-RED-NODExREDxxxxx-NNNN',
+          version: '1.0',
+        })
       );
+      req.end();
     });
   },
 
   getToken: async (username, password) => {
     return new Promise((resolve, reject) => {
-      request.post(
-        {
-          url: `https://localhost/identity-manager/api/v1/auth/token`,
-          json: {
-            name: username,
-            password: password,
-          },
+      const options = {
+        hostname: 'localhost',
+        path: '/identity-manager/api/v1/auth/token',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        (err, response, body) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(body.access_token);
-          }
-        }
+      };
+      const req = https.request(options, (res) => {
+        res.on('data', (data) => {
+          const body = JSON.parse(data);
+          resolve(body.access_token);
+        });
+      });
+      req.on('error', (err) => {
+        reject(err);
+      });
+      req.write(
+        JSON.stringify({
+          name: username,
+          password: password,
+        })
       );
+      req.end();
     });
   },
 };
