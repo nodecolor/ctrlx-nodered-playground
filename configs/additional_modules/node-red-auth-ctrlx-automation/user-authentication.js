@@ -43,9 +43,9 @@ module.exports = {
           }
         } catch (err) {
           console.log(
-            `Error occurred while checking or acquiring license: ${err}`
+            `Error occurred while checking or acquiring license`
           );
-          reject(err);
+          resolve(null);
         }
       } else {
         // Resolve with null to indicate this user does not exist

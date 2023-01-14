@@ -32,7 +32,7 @@ module.exports = {
                     resolve(false);
                   }
                 } catch (err) {
-                  reject(err);
+                  resolve(false);
                 }
               });
             } else {
@@ -41,7 +41,7 @@ module.exports = {
           }
         )
         .on('error', (err) => {
-          reject(err);
+          resolve(false);
         });
     });
   },
@@ -66,7 +66,7 @@ module.exports = {
         }
       });
       req.on('error', (err) => {
-        reject(err);
+        resolve(false);
       });
       req.write(
         JSON.stringify({
@@ -95,7 +95,7 @@ module.exports = {
         });
       });
       req.on('error', (err) => {
-        reject(err);
+        resolve(false);
       });
       req.write(
         JSON.stringify({
