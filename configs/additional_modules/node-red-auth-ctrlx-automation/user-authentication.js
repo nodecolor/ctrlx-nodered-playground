@@ -10,35 +10,42 @@ module.exports = {
   //sessionExpiryTime: 36000, // 10h
   //tokenHeader: 'Bearer',
 
-  users: function (username) {
+  users: function (username, password) {
     return new Promise(async function (resolve) {
       // Do whatever work is needed to check username is a valid
       // user.
       valid = true;
       if (valid) {
         //check license
-        isValid = await ctrlx.checkLicense();
-        if (!isValid) {
-          console.log('License is invalid. Acquiring a new license...');
-          const license = await ctrlx.acquireLicense();
-          if (license.status === 'success') {
-            console.log('License acquired successfully');
+        try {
+          const isValid = await ctrlx.checkLicense(username, password);
+          if (!isValid) {
+            console.log('License is invalid. Acquiring a new license...');
+            const license = await ctrlx.acquireLicense(username, password);
+            if (license) {
+              console.log('License acquired successfully');
+              var user = {
+                username: username,
+                permissions: '*',
+              };
+              resolve(user);
+            } else {
+              console.log('Failed to acquire license');
+              resolve(null);
+            }
+          }
+          if (isValid) {
             var user = {
               username: username,
               permissions: '*',
             };
             resolve(user);
-          } else {
-            console.log(`Failed to acquire license: ${license.message}`);
-            resolve(null);
           }
-        }
-        if (isValid) {
-          var user = {
-            username: username,
-            permissions: '*',
-          };
-          resolve(user);
+        } catch (err) {
+          console.log(
+            `Error occurred while checking or acquiring license: ${err}`
+          );
+          reject(err);
         }
       } else {
         // Resolve with null to indicate this user does not exist

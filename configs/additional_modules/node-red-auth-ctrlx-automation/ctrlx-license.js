@@ -1,59 +1,79 @@
 const request = require('request');
 
-const productId = 'YOUR_PRODUCT_ID';
-const customerId = 'YOUR_CUSTOMER_ID';
-const duration = 30;
-const apiKey = 'YOUR_API_KEY';
-const baseUrl = 'https://api.boschrexroth.com/ctrlx-automation-sdk/licensing';
-
-async function checkLicense() {
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        url: `${baseUrl}/status`,
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
+module.exports = {
+  checkLicense: async (username, password) => {
+    const apiKey = await getToken(username, password);
+    return new Promise((resolve, reject) => {
+      request.get(
+        {
+          url: `https://localhost/license-manager/api/v1/capabilities`,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
         },
-      },
-      (err, response, body) => {
-        if (err) {
-          reject(err);
-        } else {
-          const data = JSON.parse(body);
-          if (data.status === 'valid') {
-            resolve(true);
+        (err, response, body) => {
+          if (err) {
+            reject(err);
           } else {
-            resolve(false);
+            if (response.statusCode === 200) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
           }
         }
-      }
-    );
-  });
-}
+      );
+    });
+  },
 
-async function acquireLicense() {
-  return new Promise((resolve, reject) => {
-    request(
-      {
-        method: 'POST',
-        url: `${baseUrl}/acquire`,
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+  acquireLicense: async (username, password) => {
+    const apiKey = await getToken(username, password);
+    return new Promise((resolve, reject) => {
+      request.post(
+        {
+          url: `https://localhost/license`,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          json: {
+            name: 'SWL-XCx-RED-NODExREDxxxxx-NNNN',
+            version: '1.0',
+          },
         },
-        json: {
-          productId,
-          customerId,
-          duration,
-        },
-      },
-      (err, response, body) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(body);
+        (err, response, body) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (response.statusCode === 200) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          }
         }
-      }
-    );
-  });
-}
+      );
+    });
+  },
+
+  getToken: async (username, password) => {
+    return new Promise((resolve, reject) => {
+      request.post(
+        {
+          url: `https://localhost/identity-manager/api/v1/auth/token`,
+          json: {
+            name: username,
+            password: password,
+          },
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(body.access_token);
+          }
+        }
+      );
+    });
+  },
+};
