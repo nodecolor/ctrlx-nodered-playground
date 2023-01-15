@@ -23,9 +23,9 @@ module.exports = {
                 try {
                   // Find the name "SWL-XCx-RED-NODExREDxxxxx-NNNN in an array of of objects"
                   var license = data.find(
-                    (obj) => obj.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN'
+                    (obj) => obj.name === 'SWL_XCR_ENGINEERING_4H'
                   );
-                  if (license.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN') {
+                  if (license.name === 'SWL_XCR_ENGINEERING_4H') {
                     var currentDate = new Date();
                     var finalExpirationDate = new Date(
                       license.finalExpirationDate
