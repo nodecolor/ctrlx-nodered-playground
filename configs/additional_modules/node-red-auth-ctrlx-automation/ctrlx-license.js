@@ -1,7 +1,7 @@
 const https = require('https');
 
 module.exports = {
-  checkLicense: function(username, password) {
+  checkLicense: function(username, password, callback) {
     let apiKey = getToken(username, password);
       https
         .get(
@@ -30,28 +30,28 @@ module.exports = {
                       license.finalExpirationDate
                     );
                     if (currentDate < finalExpirationDate) {
-                      return true;
+                      callback(true);
                     } else {
-                      return false;
+                      callback(false);
                     }
                   } else {
-                    return false;
+                    callback(false);
                   }
                 } catch (err) {
-                  return false;
+                  callback(false);
                 }
               });
             } else {
-              return false;
+              callback(false);
             }
           }
         )
         .on('error', (err) => {
-          return false;
+          callback(false);
         });
   },
 
-  acquireLicense: function(username, password) {
+  acquireLicense: function(username, password, callback) {
     let apiKey = getToken(username, password);
       let options = {
         hostname: 'localhost',
@@ -64,13 +64,13 @@ module.exports = {
       };
       let req = https.request(options, (res) => {
         if (res.statusCode === 200) {
-          return true;
+          callback(true);
         } else {
-          return false;
+          callback(false);
         }
       });
       req.on('error', (err) => {
-        return false;
+        callback(false);
       });
       req.write(
         JSON.stringify({

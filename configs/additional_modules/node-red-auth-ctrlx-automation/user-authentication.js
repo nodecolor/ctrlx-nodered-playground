@@ -32,14 +32,18 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
-    let isValid = ctrlx.checkLicense(username, password);
+    ctrlx.checkLicense(username, password, (isValid) => {
+      return isValid;
+      });
     if (isValid) {
       api.authenticate(username, password, (user) => {
         resolve(user);
       });
     } else {
       console.log('License is invalid. Acquiring a new license...');
-      let license = ctrlx.acquireLicense(username, password);
+      ctrlx.acquireLicense(username, password, (license) => {
+        return license;
+        });
       if (license) {
         console.log('License acquired successfully');
         api.authenticate(username, password, (user) => {
