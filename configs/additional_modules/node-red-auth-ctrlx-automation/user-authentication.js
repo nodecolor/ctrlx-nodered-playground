@@ -47,7 +47,7 @@ module.exports = {
         });
       } else {
         console.log('Failed to acquire license');
-        resolve(null);
+        resolve('No license in place and failed to acquire a license automatically.');
       }
     }
   },
