@@ -21,13 +21,20 @@ module.exports = {
               });
               res.on('end', () => {
                 try {
-                  let licenses = JSON.parse(data);
-                  // Find the license with the name "SWL-XCx-RED-NODExREDxxxxx-NNNN"
-                  let license = licenses.find(
-                    (lic) => lic.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN'
+                  // Find the name "SWL-XCx-RED-NODExREDxxxxx-NNNN in an array of of objects"
+                  var license = data.find(
+                    (obj) => obj.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN'
                   );
-                  if (license) {
-                    resolve(true);
+                  if (license.name === 'SWL-XCx-RED-NODExREDxxxxx-NNNN') {
+                    var currentDate = new Date();
+                    var finalExpirationDate = new Date(
+                      license.finalExpirationDate
+                    );
+                    if (currentDate < finalExpirationDate) {
+                      resolve(true);
+                    } else {
+                      resolve(false);
+                    }
                   } else {
                     resolve(false);
                   }

@@ -47,7 +47,7 @@ module.exports = {
         });
       } else {
         console.log('Failed to acquire license');
-        resolve('No license in place and failed to acquire a license automatically.');
+        resolve('No or expired license in place, please contact your Rexroth representative.', null);
       }
     }
   },
