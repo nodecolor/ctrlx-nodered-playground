@@ -1,9 +1,8 @@
 const https = require('https');
 
 module.exports = {
-  checkLicense: async (username, password) => {
-    let apiKey = await getToken(username, password);
-    return new Promise((resolve, reject) => {
+  checkLicense: function(username, password) {
+    let apiKey = getToken(username, password);
       https
         .get(
           {
@@ -31,31 +30,29 @@ module.exports = {
                       license.finalExpirationDate
                     );
                     if (currentDate < finalExpirationDate) {
-                      resolve(true);
+                      return true;
                     } else {
-                      resolve(false);
+                      return false;
                     }
                   } else {
-                    resolve(false);
+                    return false;
                   }
                 } catch (err) {
-                  resolve(false);
+                  return false;
                 }
               });
             } else {
-              resolve(false);
+              return false;
             }
           }
         )
         .on('error', (err) => {
-          resolve(false);
+          return false;
         });
-    });
   },
 
-  acquireLicense: async (username, password) => {
-    let apiKey = await getToken(username, password);
-    return new Promise((resolve, reject) => {
+  acquireLicense: function(username, password) {
+    let apiKey = getToken(username, password);
       let options = {
         hostname: 'localhost',
         path: '/license',
@@ -67,13 +64,13 @@ module.exports = {
       };
       let req = https.request(options, (res) => {
         if (res.statusCode === 200) {
-          resolve(true);
+          return true;
         } else {
-          resolve(false);
+          return false;
         }
       });
       req.on('error', (err) => {
-        resolve(false);
+        return false;
       });
       req.write(
         JSON.stringify({
@@ -82,7 +79,6 @@ module.exports = {
         })
       );
       req.end();
-    });
   },
 
   getToken: async (username, password) => {
