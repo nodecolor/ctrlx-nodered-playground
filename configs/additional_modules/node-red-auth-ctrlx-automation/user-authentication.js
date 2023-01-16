@@ -1,19 +1,25 @@
-const api = require('./authentication-api.js');
+var api = require('./authentication-api.js');
 
 module.exports = {
   type: 'credentials',
+
+  //By default, access tokens expire after 7 days after they are created. We do not currently support refreshing the token to extend this period.
+  //The expiration time can be customised by setting the sessionExpiryTime property of the adminAuth setting.
+  //This defines, in seconds, how long a token is valid for.
+  //sessionExpiryTime: 36000, // 10h
+  //tokenHeader: 'Bearer',
 
   users: function (username) {
     return new Promise(function (resolve) {
       // Do whatever work is needed to check username is a valid
       // user.
-      let valid = true;
+      valid = true;
       if (valid) {
         // Resolve with the user object. It must contain
         // properties 'username' and 'permissions'
         var user = {
           username: username,
-          permissions: '*',
+          permissions: '*'
         };
         resolve(user);
       } else {
@@ -27,29 +33,16 @@ module.exports = {
       // Do whatever work is needed to check token is valid
       api.validate(token, (user) => {
         resolve(user);
-      });
+      })
     });
   },
   authenticate: function (username, password) {
-    return new Promise(async (resolve) => {
-      var isValid = api.checkLicense(username, password);
-      if (isValid === true) {
-        api.authenticate(username, password, (user) => {
-          resolve(user);
-        });
-      } else {
-        console.log('License is invalid. Acquiring a new license...');
-        var license = api.acquireLicense(username, password);
-        if (license === true) {
-          console.log('License acquired successfully');
-          api.authenticate(username, password, (user) => {
-            resolve(user);
-          });
-        } else {
-          console.log('Failed to acquire license');
-          resolve('There is no or an expired license in place', null);
-        }
-      }
+    return new Promise(function (resolve) {
+      // Do whatever work is needed to validate the username/password
+      // combination.
+      api.authenticate(username, password, (user) => {
+        resolve(user);
+      })
     });
   },
   default: function () {
@@ -59,5 +52,5 @@ module.exports = {
       // resolve({anonymous: true, permissions:'read'});
       resolve(null);
     });
-  },
-};
+  }
+}
