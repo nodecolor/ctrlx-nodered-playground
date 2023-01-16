@@ -37,12 +37,34 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
+<<<<<<< HEAD
     return new Promise(function (resolve) {
       // Do whatever work is needed to validate the username/password
       // combination.
       api.authenticate(username, password, (user) => {
         resolve(user);
       })
+=======
+    return new Promise(async (resolve, reject) => {
+      let isValid = await ctrlx.checkLicense(username, password);
+      if (isValid === true) {
+        api.authenticate(username, password, (user) => {
+          resolve(user);
+        });
+      } else {
+        console.log('License is invalid. Acquiring a new license...');
+        let license = await ctrlx.acquireLicense(username, password);
+        if (license === true) {
+          console.log('License acquired successfully');
+          api.authenticate(username, password, (user) => {
+            resolve(user);
+          });
+        } else {
+          console.log('Failed to acquire license');
+          resolve(null);
+        }
+      }
+>>>>>>> parent of 4d72c6b (fix json.Parse())
     });
   },
   default: function () {
