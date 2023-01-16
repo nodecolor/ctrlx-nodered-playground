@@ -1,4 +1,5 @@
 var api = require('./authentication-api.js');
+var ctrlx = require('./ctrlx-license.js');
 
 module.exports = {
   type: 'credentials',
@@ -19,7 +20,7 @@ module.exports = {
         // properties 'username' and 'permissions'
         var user = {
           username: username,
-          permissions: '*'
+          permissions: '*',
         };
         resolve(user);
       } else {
@@ -33,25 +34,17 @@ module.exports = {
       // Do whatever work is needed to check token is valid
       api.validate(token, (user) => {
         resolve(user);
-      })
+      });
     });
   },
   authenticate: function (username, password) {
-<<<<<<< HEAD
-    return new Promise(function (resolve) {
-      // Do whatever work is needed to validate the username/password
-      // combination.
-      api.authenticate(username, password, (user) => {
-        resolve(user);
-      })
-=======
     return new Promise(async (resolve, reject) => {
       let isValid = await ctrlx.checkLicense(username, password);
       if (isValid === true) {
         api.authenticate(username, password, (user) => {
           resolve(user);
         });
-      } else {
+      } /*else {
         console.log('License is invalid. Acquiring a new license...');
         let license = await ctrlx.acquireLicense(username, password);
         if (license === true) {
@@ -59,12 +52,10 @@ module.exports = {
           api.authenticate(username, password, (user) => {
             resolve(user);
           });
-        } else {
-          console.log('Failed to acquire license');
-          resolve(null);
-        }
+        } */ else {
+        console.log('Failed to acquire license');
+        resolve('License issue', null);
       }
->>>>>>> parent of 4d72c6b (fix json.Parse())
     });
   },
   default: function () {
@@ -74,5 +65,5 @@ module.exports = {
       // resolve({anonymous: true, permissions:'read'});
       resolve(null);
     });
-  }
-}
+  },
+};
