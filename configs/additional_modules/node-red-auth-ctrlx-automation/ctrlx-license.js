@@ -1,8 +1,9 @@
 const https = require('https');
 
 module.exports = {
-  checkLicense: function(username, password, callback) {
-    let apiKey = getToken(username, password);
+  checkLicense: function(username, password) {
+    return new Promise(function (resolve, reject) {
+    var apiKey = getToken(username, password);
       https
         .get(
           {
@@ -13,7 +14,7 @@ module.exports = {
             },
           },
           (res) => {
-            let data = '';
+            var data = '';
             if (res.statusCode === 200) {
               res.on('data', (chunk) => {
                 data += chunk;
@@ -30,30 +31,32 @@ module.exports = {
                       license.finalExpirationDate
                     );
                     if (currentDate < finalExpirationDate) {
-                      callback(true);
+                      resolve(true);
                     } else {
-                      callback(false);
+                      resolve(false);
                     }
                   } else {
-                    callback(false);
+                    resolve(false);
                   }
                 } catch (err) {
-                  callback(false);
+                  resolve(false);
                 }
               });
             } else {
-              callback(false);
+              resolve(false);
             }
           }
         )
         .on('error', (err) => {
-          callback(false);
+          resolve(false);
         });
+      });
   },
 
-  acquireLicense: function(username, password, callback) {
-    let apiKey = getToken(username, password);
-      let options = {
+  acquireLicense: function(username, password) {
+    return new Promise(function (resolve, reject) {
+    var apiKey = getToken(username, password);
+      var options = {
         hostname: 'localhost',
         path: '/license',
         method: 'POST',
@@ -62,15 +65,15 @@ module.exports = {
           'Content-Type': 'application/json',
         },
       };
-      let req = https.request(options, (res) => {
+      var req = https.request(options, (res) => {
         if (res.statusCode === 200) {
-          callback(true);
+          resolve(true);
         } else {
-          callback(false);
+          resolve(false);
         }
       });
       req.on('error', (err) => {
-        callback(false);
+        resolve(false);
       });
       req.write(
         JSON.stringify({
@@ -79,6 +82,7 @@ module.exports = {
         })
       );
       req.end();
+    });
   },
 
   getToken: async (username, password) => {
@@ -98,10 +102,10 @@ module.exports = {
     };
 
     return new Promise((resolve, reject) => {
-      let req = https.request(options, (res) => {
+      var req = https.request(options, (res) => {
         res.on('data', (d) => {
           try {
-            let jsonObject = JSON.parse(d);
+            var jsonObject = JSON.parse(d);
             resolve(jsonObject.access_token);
           } catch (err) {
             console.log(err);

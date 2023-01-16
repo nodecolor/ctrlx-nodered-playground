@@ -32,28 +32,26 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
-    ctrlx.checkLicense(username, password, (isValid) => {
-      return isValid;
-      });
-    if (isValid) {
-      api.authenticate(username, password, (user) => {
-        resolve(user);
-      });
-    } else {
-      console.log('License is invalid. Acquiring a new license...');
-      ctrlx.acquireLicense(username, password, (license) => {
-        return license;
-        });
-      if (license) {
-        console.log('License acquired successfully');
+    return new Promise(async (resolve, reject) => {
+      let isValid = await ctrlx.checkLicense(username, password);
+      if (isValid === true) {
         api.authenticate(username, password, (user) => {
           resolve(user);
         });
       } else {
-        console.log('Failed to acquire license');
-        resolve('No or expired license in place, please contact your Rexroth representative.', null);
+        console.log('License is invalid. Acquiring a new license...');
+        let license = await ctrlx.acquireLicense(username, password);
+        if (license === true) {
+          console.log('License acquired successfully');
+          api.authenticate(username, password, (user) => {
+            resolve(user);
+          });
+        } else {
+          console.log('Failed to acquire license');
+          resolve(null);
+        }
       }
-    }
+    });
   },
   default: function () {
     return new Promise(function (resolve) {
