@@ -2,7 +2,7 @@ const https = require('https');
 
 module.exports = {
   checkLicense: function(username, password) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
     var apiKey = getToken(username, password);
       https
         .get(
@@ -22,10 +22,10 @@ module.exports = {
               res.on('end', () => {
                 try {
                   // Find the name "SWL-XCx-RED-NODExREDxxxxx-NNNN in an array of of objects"
+                  var data = JSON.parse(data);
                   var license = data.find(
                     (obj) => obj.name === 'SWL_XCR_ENGINEERING_4H'
                   );
-                  var license = JSON.parse(license);
                   if (license.name === 'SWL_XCR_ENGINEERING_4H') {
                     var currentDate = new Date();
                     var finalExpirationDate = new Date(
@@ -55,7 +55,7 @@ module.exports = {
   },
 
   acquireLicense: function(username, password) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
     var apiKey = getToken(username, password);
       var options = {
         hostname: 'localhost',

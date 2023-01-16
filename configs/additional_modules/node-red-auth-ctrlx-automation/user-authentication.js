@@ -48,7 +48,7 @@ module.exports = {
           });
         } else {
           console.log('Failed to acquire license');
-          resolve(null);
+          resolve('There is no or an expired license in place', null);
         }
       }
     });
