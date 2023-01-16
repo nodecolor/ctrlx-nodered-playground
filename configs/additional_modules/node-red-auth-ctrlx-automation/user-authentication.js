@@ -1,5 +1,4 @@
 const api = require('./authentication-api.js');
-const ctrlx = require('./ctrlx-license.js');
 
 module.exports = {
   type: 'credentials',
@@ -32,15 +31,15 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
-    return new Promise(async (resolve, reject) => {
-      let isValid = await ctrlx.checkLicense(username, password);
+    return new Promise(async (resolve) => {
+      var isValid = api.checkLicense(username, password);
       if (isValid === true) {
         api.authenticate(username, password, (user) => {
           resolve(user);
         });
       } else {
         console.log('License is invalid. Acquiring a new license...');
-        let license = await ctrlx.acquireLicense(username, password);
+        var license = api.acquireLicense(username, password);
         if (license === true) {
           console.log('License acquired successfully');
           api.authenticate(username, password, (user) => {
