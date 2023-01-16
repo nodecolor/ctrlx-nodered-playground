@@ -25,7 +25,6 @@ module.exports = {
                   var license = data.find(
                     (obj) => obj.name === 'SWL_XCR_ENGINEERING_4H'
                   );
-                  var license = JSON.parse(license);
                   if (license.name === 'SWL_XCR_ENGINEERING_4H') {
                     var currentDate = new Date();
                     var finalExpirationDate = new Date(
