@@ -39,12 +39,12 @@ module.exports = {
   },
   authenticate: function (username, password) {
     return new Promise(async (resolve, reject) => {
-      ctrlx.checkLicense(username, password, (isValid) => {
-        if (isValid === true) {
-          api.authenticate(username, password, (user) => {
-            resolve(user);
-          });
-        } else {
+      var isValid = ctrlx.checkLicense(username, password);
+      if (isValid === true) {
+        api.authenticate(username, password, (user) => {
+          resolve(user);
+        });
+      } else {
         /*
         else {
         console.log('License is invalid. Acquiring a new license...');
@@ -55,10 +55,9 @@ module.exports = {
             resolve(user);
           });
         } */
-          console.log('Failed to acquire license');
-          resolve('License issue', null);
-        }
-      });
+        console.log('Failed to acquire license');
+        resolve('License issue', null);
+      }
     });
   },
   default: function () {

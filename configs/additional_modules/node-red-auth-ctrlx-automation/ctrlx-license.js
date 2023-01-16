@@ -1,52 +1,87 @@
 const https = require('https');
 
-module.exports = {
-  checkLicense: function (username, password, callback) {
-    getToken(username, password, (apiKey) => {
-      https
-        .get(
-          {
-            hostname: 'localhost',
-            path: '/license-manager/api/v1/capabilities',
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-            },
-          },
-          (res) => {
-            let chunks = [];
-            res
-              .on('data', (d) => {
-                chunks.push(d);
-              })
-              .on('end', function () {
-                let data = Buffer.concat(chunks);
-                let jsonObject = JSON.parse(data);
-                var license = jsonObject.find(
-                  (obj) => obj.name === 'SWL_XCR_ENGINEERING_4H'
-                );
-                if (license.name === 'SWL_XCR_ENGINEERING_4H') {
-                  var currentDate = new Date();
-                  var finalExpirationDate = new Date(
-                    license.finalExpirationDate
-                  );
-                  if (currentDate < finalExpirationDate) {
-                    callback(true);
-                  } else {
-                    callback(false);
-                  }
-                } else {
-                  callback(false);
-                }
-              });
-          }
-        )
-        .on('error', (error) => {
-          console.error(error);
-          callback(null);
-        });
+function checkLicense(username, password) {
+  var apiKey = getToken(username, password);
+  https
+    .get(
+      {
+        hostname: 'localhost',
+        path: '/license-manager/api/v1/capabilities',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      },
+      (res) => {
+        let chunks = [];
+        res
+          .on('data', (d) => {
+            chunks.push(d);
+          })
+          .on('end', function () {
+            let data = Buffer.concat(chunks);
+            let jsonObject = JSON.parse(data);
+            var license = jsonObject.find(
+              (obj) => obj.name === 'SWL_XCR_ENGINEERING_4H'
+            );
+            if (license.name === 'SWL_XCR_ENGINEERING_4H') {
+              var currentDate = new Date();
+              var finalExpirationDate = new Date(license.finalExpirationDate);
+              if (currentDate < finalExpirationDate) {
+                return true;
+              } else {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          });
+      }
+    )
+    .on('error', (error) => {
+      console.error(error);
+      return false;
     });
-  },
-  /*
+}
+function getToken(username, password) {
+  //console.log('authenticate:', username);
+
+  var data = JSON.stringify({
+    name: username,
+    password: password,
+  });
+
+  var options = {
+    hostname: 'localhost',
+    path: '/identity-manager/api/v2/auth/token',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length,
+    },
+  };
+
+  var req = https.request(options, (res) => {
+    let chunks = [];
+    res
+      .on('data', (d) => {
+        chunks.push(d);
+      })
+      .on('end', function () {
+        let data = Buffer.concat(chunks);
+        let jsonObject = JSON.parse(data);
+        return jsonObject.access_token;
+      });
+  });
+
+  req.on('error', (error) => {
+    console.error(error);
+    return null;
+  });
+
+  req.write(data);
+  req.end();
+}
+/*
   acquireLicense: function (username, password, callback) {
     var apiKey = getToken(username, password, (apiKey) => {
       var options = {
@@ -78,43 +113,3 @@ module.exports = {
     });
   },
   */
-  getToken: function (username, password, callback) {
-    //console.log('authenticate:', username);
-
-    var data = JSON.stringify({
-      name: username,
-      password: password,
-    });
-
-    var options = {
-      hostname: 'localhost',
-      path: '/identity-manager/api/v2/auth/token',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': data.length,
-      },
-    };
-
-    var req = https.request(options, (res) => {
-      let chunks = [];
-      res
-        .on('data', (d) => {
-          chunks.push(d);
-        })
-        .on('end', function () {
-          let data = Buffer.concat(chunks);
-          let jsonObject = JSON.parse(data);
-          callback(jsonObject.access_token);
-        });
-    });
-
-    req.on('error', (error) => {
-      console.error(error);
-      callback(null);
-    });
-
-    req.write(data);
-    req.end();
-  },
-};
