@@ -38,21 +38,20 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
-    check.license(username, password, (valid) => {
-      if (valid) {
-        return new Promise(function (resolve) {
-          // Do whatever work is needed to validate the username/password
-          // combination.
-          api.authenticate(username, password, (user) => {
-            resolve(user);
-          });
+    var valid = check.license(username, password);
+    if (valid) {
+      return new Promise(function (resolve) {
+        // Do whatever work is needed to validate the username/password
+        // combination.
+        api.authenticate(username, password, (user) => {
+          resolve(user);
         });
-      } else {
-        return new Promise(function (resolve) {
-          resolve('License is missing', null);
-        });
-      }
-    });
+      });
+    } else {
+      return new Promise(function (resolve) {
+        resolve('License is missing', null);
+      });
+    }
   },
   default: function () {
     return new Promise(function (resolve) {
