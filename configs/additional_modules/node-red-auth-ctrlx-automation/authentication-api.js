@@ -167,7 +167,7 @@ module.exports = {
   license: function (token, callback) {
     //change name of your license here
     var payload = JSON.stringify({
-      name: 'SWL-XCx-RED-NODExREDxxxxx-NNNN',
+      name: 'SWL_XCR_ENGINEERING_4H',
       version: '1.0',
     });
 
