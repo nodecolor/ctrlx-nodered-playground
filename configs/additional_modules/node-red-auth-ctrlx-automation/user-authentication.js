@@ -1,5 +1,5 @@
 var api = require('./authentication-api.js');
-var ctrlx = require('./ctrlx-license.js');
+var check = require('./check-license.js');
 
 module.exports = {
   type: 'credentials',
@@ -38,25 +38,19 @@ module.exports = {
     });
   },
   authenticate: function (username, password) {
-    return new Promise(async (resolve, reject) => {
-      var isValid = ctrlx.checkLicense(username, password);
-      if (isValid === true) {
-        api.authenticate(username, password, (user) => {
-          resolve(user);
-        });
-      } else {
-        /*
-        else {
-        console.log('License is invalid. Acquiring a new license...');
-        let license = await ctrlx.acquireLicense(username, password);
-        if (license === true) {
-          console.log('License acquired successfully');
+    check.license(username, password, (valid) => {
+      if (valid) {
+        return new Promise(function (resolve) {
+          // Do whatever work is needed to validate the username/password
+          // combination.
           api.authenticate(username, password, (user) => {
             resolve(user);
           });
-        } */
-        console.log('Failed to acquire license');
-        resolve('License issue', null);
+        });
+      } else {
+        return new Promise(function (resolve) {
+          resolve('License is missing', null);
+        });
       }
     });
   },
