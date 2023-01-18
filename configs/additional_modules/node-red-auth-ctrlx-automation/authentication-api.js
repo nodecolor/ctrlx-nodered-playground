@@ -99,11 +99,8 @@ module.exports = {
           //console.log('validation result:', JSON.stringify(jsonObject));
 
           if (jsonObject.valid === true) {
-            var valid = module.exports.license(token);
-            if (valid) {
-              module.exports.checkPermissions(token, callback);
-              return;
-            }
+            module.exports.checkPermissions(token, callback);
+            return;
           }
           callback(null);
         });
@@ -145,7 +142,16 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-          module.exports.checkPermissions(jsonObject.access_token, callback);
+          module.exports.license(jsonObject.access_token, (valid) => {
+            if (valid === true) {
+              module.exports.checkPermissions(
+                jsonObject.access_token,
+                callback
+              );
+            } else {
+              callback(null);
+            }
+          });
         });
     });
 
@@ -158,7 +164,7 @@ module.exports = {
     req.end();
   },
 
-  license: function (token) {
+  license: function (token, callback) {
     //change name of your license here
     var payload = JSON.stringify({
       name: 'SWL-XCx-RED-NODExREDxxxxx-NNNN',
@@ -176,11 +182,12 @@ module.exports = {
         Authorization: 'Bearer ' + token,
       },
     };
+
     var req = https.request(options, (res) => {
       if (res.statusCode === 200) {
-        return true;
+        callback(true);
       } else {
-        return false;
+        callback(false);
       }
     });
 
