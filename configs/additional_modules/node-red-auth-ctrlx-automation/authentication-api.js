@@ -159,6 +159,7 @@ module.exports = {
   },
 
   license: function (token) {
+    //change name of your license here
     var payload = JSON.stringify({
       name: 'SWL_XCR_ENGINEERING_4H',
       version: '1.0',
