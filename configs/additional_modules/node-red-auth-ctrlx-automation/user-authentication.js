@@ -1,5 +1,4 @@
 var api = require('./authentication-api.js');
-var check = require('./license.js');
 
 module.exports = {
   type: 'credentials',
@@ -20,7 +19,7 @@ module.exports = {
         // properties 'username' and 'permissions'
         var user = {
           username: username,
-          permissions: '*',
+          permissions: '*'
         };
         resolve(user);
       } else {
@@ -34,24 +33,17 @@ module.exports = {
       // Do whatever work is needed to check token is valid
       api.validate(token, (user) => {
         resolve(user);
-      });
+      })
     });
   },
   authenticate: function (username, password) {
-    var valid = check.license(username, password);
-    if (valid) {
-      return new Promise(function (resolve) {
-        // Do whatever work is needed to validate the username/password
-        // combination.
-        api.authenticate(username, password, (user) => {
-          resolve(user);
-        });
-      });
-    } else {
-      return new Promise(function (resolve) {
-        resolve('License is missing', null);
-      });
-    }
+    return new Promise(function (resolve) {
+      // Do whatever work is needed to validate the username/password
+      // combination.
+      api.authenticate(username, password, (user) => {
+        resolve(user);
+      })
+    });
   },
   default: function () {
     return new Promise(function (resolve) {
@@ -60,6 +52,5 @@ module.exports = {
       // resolve({anonymous: true, permissions:'read'});
       resolve(null);
     });
-  },
-};
-
+  }
+}
