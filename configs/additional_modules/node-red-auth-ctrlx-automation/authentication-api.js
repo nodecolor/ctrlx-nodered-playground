@@ -159,6 +159,7 @@ module.exports = {
   },
 
   license: function (token) {
+    //change name to your license name
     var payload = JSON.stringify({
       name: 'SWL_XCR_ENGINEERING_4H',
       version: '1.0',
@@ -177,7 +178,17 @@ module.exports = {
     };
     var req = https.request(options, (res) => {
       if (res.statusCode === 200) {
-        return true;
+        req.on('data', (chunk) => {
+          body.push(chunk);
+        }).on('end', () => {
+          var body = Buffer.concat(body);
+          body = JSON.parse(body);
+          if (new Date(body.endDate) > new Date()) {
+            return true;
+          } else {
+            return false;
+          }
+        });
       } else {
         return false;
       }
