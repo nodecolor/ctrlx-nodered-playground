@@ -28,14 +28,14 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-          var valid = callLicensingEndpoint(jsonObject.access_token);
+          var valid = module.exports.callLicensingEndpoint(jsonObject.access_token);
           return valid;
         });
     });
 
     req.on('error', (error) => {
       console.error(error);
-      reject(error);
+      return false;
     });
 
     req.write(data);
@@ -68,7 +68,7 @@ module.exports = {
     });
 
     req.on('error', (error) => {
-      reject(error);
+    return false;
     });
 
     req.write(payload);
