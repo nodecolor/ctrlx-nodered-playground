@@ -167,7 +167,7 @@ module.exports = {
   license: function (token, callback) {
     //change name of your license here
     var payload = JSON.stringify({
-      name: 'SWL_XCR_ENGINEERING_4H',
+      name: 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN',
       version: '1.0',
     });
 
@@ -192,7 +192,7 @@ module.exports = {
     });
 
     req.on('error', (error) => {
-      return false;
+      callback(false);
     });
 
     req.write(payload);
