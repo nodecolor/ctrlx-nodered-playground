@@ -187,6 +187,7 @@ module.exports = {
       if (res.statusCode === 200) {
         callback(true);
       } else {
+        this.error("License not valid!");
         callback(false);
       }
     });
