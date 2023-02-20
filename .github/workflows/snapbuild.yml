@@ -14,11 +14,6 @@ jobs:
     steps:
     # Checkout the code
     - uses: actions/checkout@v2
-    
-    - id: prebuild
-      run: |
-        sudo apt-get -y update
-        sudo apt-get -y install podman
 
     # Do the build!
     - id: build
@@ -28,13 +23,13 @@ jobs:
         sudo systemctl restart docker
 
         # Configure qemu-user-static
-        sudo podman run --rm --tty --cap-add=SYS_PTRACE \
+        sudo docker run --rm --tty \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           multiarch/qemu-user-static --reset -p yes
 
         # Run snapcraft
-        sudo podman run --rm --tty --cap-add=SYS_PTRACE \
+        sudo docker run --rm --tty \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           --device /dev/fuse \
@@ -44,7 +39,7 @@ jobs:
           --workdir $GITHUB_WORKSPACE \
           --platform "${{ matrix.architecture }}" \
           --env PLAYTEST="${{ matrix.playtest }}" \
-          diddledan/snapcraft:core18
+          diddledani/snapcraft:core18
 
         echo ::set-output name=snap::$(find $GITHUB_WORKSPACE -maxdepth 1 -type f -name "*.snap" | head -n1)
     -
