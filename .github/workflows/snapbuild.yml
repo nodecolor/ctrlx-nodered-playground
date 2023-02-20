@@ -19,7 +19,7 @@ jobs:
       id: snapcraft
       with:
         architecture: ${{ matrix.platform }}
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: snap
         path: ${{ steps.snapcraft.outputs.snap }}
