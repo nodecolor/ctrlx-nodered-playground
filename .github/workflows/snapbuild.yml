@@ -14,6 +14,11 @@ jobs:
     steps:
     # Checkout the code
     - uses: actions/checkout@v2
+    
+    - id: prebuild
+      run: |
+        sudo apt-get -y update
+        sudo apt-get -y install podman
 
     # Do the build!
     - id: build
@@ -23,13 +28,13 @@ jobs:
         sudo systemctl restart docker
 
         # Configure qemu-user-static
-        sudo docker run --rm --tty \
+        sudo podman run --rm --tty \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           multiarch/qemu-user-static --reset -p yes
 
         # Run snapcraft
-        sudo docker run --rm --tty \
+        sudo podman run --rm --tty \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           --device /dev/fuse \
