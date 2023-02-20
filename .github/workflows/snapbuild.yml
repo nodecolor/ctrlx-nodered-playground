@@ -13,35 +13,12 @@ jobs:
         - linux/arm64
     steps:
     # Checkout the code
-    - uses: actions/checkout@v2
-
-    # Do the build!
-    - id: build
-      run: |
-        # Enable docker daemon support for --platform parameter
-        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json > /dev/null
-        sudo systemctl restart docker
-
-        # Configure qemu-user-static
-        sudo docker run --rm --tty --privileged \
-          --security-opt apparmor:unconfined \
-          --cap-add SYS_ADMIN \
-          multiarch/qemu-user-static --reset -p yes
-
-        # Run snapcraft
-        sudo docker run --rm --tty --privileged\
-          --security-opt apparmor:unconfined \
-          --cap-add SYS_ADMIN \
-          --device /dev/fuse \
-          --volume /sys \
-          --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
-          --volume $GITHUB_WORKSPACE:$GITHUB_WORKSPACE \
-          --workdir $GITHUB_WORKSPACE \
-          --platform "${{ matrix.architecture }}" \
-          --env PLAYTEST="${{ matrix.playtest }}" \
-          diddledani/snapcraft:core18
-
-        echo ::set-output name=snap::$(find $GITHUB_WORKSPACE -maxdepth 1 -type f -name "*.snap" | head -n1)
+    - uses: actions/checkout@v3
+    - uses: docker/setup-qemu-action@v1
+    - uses: diddlesnaps/snapcraft-multiarch-action@v1
+      id: build
+      with:
+        architecture: ${{ matrix.platform }}
     -
       name: Upload
       uses: actions/upload-artifact@v3
