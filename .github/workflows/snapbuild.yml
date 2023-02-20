@@ -28,13 +28,13 @@ jobs:
         sudo systemctl restart docker
 
         # Configure qemu-user-static
-        sudo podman run --rm --tty --cap-add=SYS_PTRACE\
+        sudo podman run --rm --tty --cap-add=SYS_PTRACE \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           multiarch/qemu-user-static --reset -p yes
 
         # Run snapcraft
-        sudo podman run --rm --tty --cap-add=SYS_PTRACE\
+        sudo podman run --rm --tty --cap-add=SYS_PTRACE \
           --security-opt apparmor:unconfined \
           --cap-add SYS_ADMIN \
           --device /dev/fuse \
