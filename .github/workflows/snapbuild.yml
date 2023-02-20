@@ -1,4 +1,4 @@
-name: snapbuild_arm64
+name: snapbuild
 on:
   workflow_dispatch:
 jobs:
