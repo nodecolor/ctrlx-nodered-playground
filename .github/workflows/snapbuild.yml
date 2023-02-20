@@ -19,7 +19,6 @@ jobs:
     - id: build
       run: |
         sudo grub-mkconfig -o /boot/grub/grub.cfg
-        sudo grub2-mkconfig -o /boot/grub/grub.cfg
         sudo update-grub
         sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=0"
         # Enable docker daemon support for --platform parameter
