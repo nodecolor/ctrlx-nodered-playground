@@ -2,13 +2,12 @@ name: snapbuild
 on:
   workflow_dispatch:
 jobs:
-  build-stable:
+  build:
     runs-on: ubuntu-latest
-    
-    # Let's build for amd64 and arm64 see crtlx requirements
     strategy:
       matrix:
-        architecture:
+        # Let's build for amd64 and arm64 see crtlx requirements
+        platform:
         - amd64
         - arm64
     steps:
