@@ -164,7 +164,8 @@ module.exports = {
     req.end();
   },
 
- // license: function (token, callback) {
+  license: function (token, callback) {
+    /*
     //change name of your license here
     var payload = JSON.stringify({
       name: 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN',
@@ -187,7 +188,6 @@ module.exports = {
       if (res.statusCode === 200) {
         callback(true);
       } else {
-        this.error("License not valid!");
         callback(false);
       }
     });
@@ -198,5 +198,7 @@ module.exports = {
 
     req.write(payload);
     req.end();
+    */
+    callback(true);
   },
 };
