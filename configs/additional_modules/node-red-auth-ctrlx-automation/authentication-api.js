@@ -164,7 +164,7 @@ module.exports = {
     req.end();
   },
 
-  license: function (token, callback) {
+ // license: function (token, callback) {
     //change name of your license here
     var payload = JSON.stringify({
       name: 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN',
