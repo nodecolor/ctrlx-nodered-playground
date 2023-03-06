@@ -1,4 +1,4 @@
-name: snapbuild
+name: snapbuild-ctrlx
 on:
   workflow_dispatch:
 jobs:
@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Let's build for amd64 and arm64 see crtlx requirements
+        # Let's build for amd64 and arm64 see ctrlx requirements
         platform:
         - amd64
         - arm64
