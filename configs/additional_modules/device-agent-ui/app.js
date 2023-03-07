@@ -18,8 +18,11 @@ app.post("/save", function (req, res) {
     body += chunk.toString();
   });
   req.on("end", () => {
-    const data = JSON.parse(body);
-    const yamlData = yaml.dump(data);
+    var data = JSON.parse(body);
+    if (data.moduleCache === "true") { 
+      data.moduleCache = true;
+    }
+    var yamlData = yaml.dump(data);
     fs.writeFileSync(configYml, yamlData);
     res.sendStatus(200);
   });

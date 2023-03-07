@@ -4,146 +4,7 @@
 <head>
     <title>File Configuration UI</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #333;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 32px;
-            color: #343a40;
-        }
-
-        label {
-            display: block;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #343a40;
-        }
-
-        input[type="text"] {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-
-        input[type="password"] {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
-        }
-
-        input[type="submit"] {
-            display: inline-block;
-            padding: 6px 16px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            background-color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: .25rem;
-            transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-            cursor: pointer;
-        }
-
-        button {
-            display: inline-block;
-            padding: 6px 16px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            background-color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: .25rem;
-            transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-            cursor: pointer;
-        }
-
-        button#start-agent-btn.stop {
-            background-color: #AA4444;
-            border-color: #AA4444;
-        }
-
-        button#start-agent-btn.stop:hover {
-            background-color: #AA4444;
-            border-color: #AA4444;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0069d9;
-            border-color: #0062cc;
-        }
-
-        input[type="submit"]:focus {
-            box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5);
-        }
-
-        .logo {
-            display: inline-block;
-            height: 40px;
-            margin-right: 16px;
-            vertical-align: middle;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 8px;
-        }
-
-        label[for="moduleCache"] {
-            display: inline-block;
-            margin-bottom: 8px;
-            color: #343a40;
-        }
-
-        input[type="checkbox"]:focus {
-            outline: none;
-        }
-
-        input[type="checkbox"]:checked+label:before {
-            content: "\2714";
-            font-size: 16px;
-            color: #007bff;
-            margin-right: 8px;
-        }
-
-        input[type="checkbox"]:checked+label {
-            font-weight: 700;
-            color: #343a40;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -167,7 +28,7 @@
             <input type="checkbox" id="moduleCache" name="moduleCache" value="true"><br>
             <input type="submit" value="Save Configuration">
     </form>
-    <button id="start-agent-btn">Start Device Agent</button>
+    <button id="start-agent-btn">Start Node-RED Device Agent</button>
     <div id="info-box"></div>
     <script src="./app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
@@ -207,7 +68,7 @@
             document.getElementById('brokerURL').value = configData.brokerURL;
             document.getElementById('brokerUsername').value = configData.brokerUsername;
             document.getElementById('brokerPassword').value = configData.brokerPassword;
-            if (configData.moduleCache == "true") {
+            if (configData.moduleCache === true) {
                 document.getElementById('moduleCache').checked = true;
             }
         }
@@ -243,7 +104,7 @@
                 fetch('/stop')
                     .then(response => {
                         if (response.ok) {
-                            startButton.textContent = 'Start Device Agent';
+                            startButton.textContent = 'Start Node-RED Device Agent';
                             startButton.classList.remove('stop');
                             document.getElementById('info-box').textContent = '';
                             document.getElementById('info-box').classList.remove('active');
@@ -277,7 +138,7 @@
                         //infoBox.classList.add('active');
                         processId = data.processId;
                     } else {
-                        startButton.textContent = 'Start Device Agent';
+                        startButton.textContent = 'Start Node-RED Device Agent';
                         startButton.classList.remove('stop');
                         document.getElementById('info-box').textContent = '';
                         document.getElementById('info-box').classList.remove('active');
