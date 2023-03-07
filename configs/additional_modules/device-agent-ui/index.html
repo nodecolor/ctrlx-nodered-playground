@@ -78,6 +78,30 @@
             cursor: pointer;
         }
 
+        button {
+            display: inline-block;
+            padding: 6px 16px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: .25rem;
+            transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+            cursor: pointer;
+        }
+
+        button#start-agent-btn.stop {
+            background-color: #AA4444;
+            border-color: #AA4444;
+        }
+
+        button#start-agent-btn.stop:hover {
+            background-color: #AA4444;
+            border-color: #AA4444;
+        }
+
         input[type="submit"]:hover {
             background-color: #0069d9;
             border-color: #0062cc;
@@ -93,33 +117,62 @@
             margin-right: 16px;
             vertical-align: middle;
         }
+
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        label[for="moduleCache"] {
+            display: inline-block;
+            margin-bottom: 8px;
+            color: #343a40;
+        }
+
+        input[type="checkbox"]:focus {
+            outline: none;
+        }
+
+        input[type="checkbox"]:checked+label:before {
+            content: "\2714";
+            font-size: 16px;
+            color: #007bff;
+            margin-right: 8px;
+        }
+
+        input[type="checkbox"]:checked+label {
+            font-weight: 700;
+            color: #343a40;
+        }
     </style>
 </head>
 
 <body>
     <h1><img src="images/flowforge-logo.png" alt="FlowForge Logo" class="logo">FlowForge Device Agent Configuration</h1>
     <form id="config-form" action="#">
-        <label for="deviceId">Device ID:</label>
-        <input type="text" id="deviceId" name="deviceId" value=""><br>
-        <label for="token">Token:</label>
-        <input type="text" id="token" name="token" value=""><br>
-        <label for="credentialSecret">Credential Secret:</label>
-        <input type="password" id="credentialSecret" name="credentialSecret" value=""><br>
-        <label for="forgeURL">Forge URL:</label>
-        <input type="text" id="forgeURL" name="forgeURL" value=""><br>
-        <label for="brokerURL">Broker URL:</label>
-        <input type="text" id="brokerURL" name="brokerURL" value=""><br>
-        <label for="brokerUsername">Broker Username:</label>
-        <input type="text" id="brokerUsername" name="brokerUsername" value=""><br>
-        <label for="brokerPassword">Broker Password:</label>
-        <input type="password" id="brokerPassword" name="brokerPassword" value=""><br>
-        <input type="submit" value="Save Configuration">
+        <labelfor="deviceId">Device ID:</label>
+            <input type="text" id="deviceId" name="deviceId" value=""><br>
+            <label for="token">Token:</label>
+            <input type="text" id="token" name="token" value=""><br>
+            <label for="credentialSecret">Credential Secret:</label>
+            <input type="password" id="credentialSecret" name="credentialSecret" value=""><br>
+            <label for="forgeURL">Forge URL:</label>
+            <input type="text" id="forgeURL" name="forgeURL" value=""><br>
+            <label for="brokerURL">Broker URL:</label>
+            <input type="text" id="brokerURL" name="brokerURL" value=""><br>
+            <label for="brokerUsername">Broker Username:</label>
+            <input type="text" id="brokerUsername" name="brokerUsername" value=""><br>
+            <label for="brokerPassword">Broker Password:</label>
+            <input type="password" id="brokerPassword" name="brokerPassword" value=""><br>
+            <label for="moduleCache"><a href="https://github.com/flowforge/flowforge-device-agent#running-with-no-access-to-npmjsorg" target="_blank">Enable Module Cache</a>:</label>
+            <input type="checkbox" id="moduleCache" name="moduleCache" value="true"><br>
+            <input type="submit" value="Save Configuration">
     </form>
+    <button id="start-agent-btn">Start Device Agent</button>
+    <div id="info-box"></div>
     <script src="./app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script>
         var form = document.getElementById('config-form');
-
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -138,6 +191,8 @@
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
+                document.getElementById('info-box').textContent = 'Config saved successfully';
+                document.getElementById('info-box').classList.add('active');
                 console.log('Config saved successfully');
             }).catch(error => {
                 console.error('Error saving config: ', error);
@@ -152,6 +207,9 @@
             document.getElementById('brokerURL').value = configData.brokerURL;
             document.getElementById('brokerUsername').value = configData.brokerUsername;
             document.getElementById('brokerPassword').value = configData.brokerPassword;
+            if (configData.moduleCache == "true") {
+                document.getElementById('moduleCache').checked = true;
+            }
         }
 
         const yamlUrl = './config.yml';
@@ -162,6 +220,80 @@
                 var configData = jsyaml.load(yamlData);
                 populateConfigForm(configData);
             });
+
+        var startButton = document.getElementById('start-agent-btn');
+        startButton.addEventListener('click', () => {
+            if (!processId) {
+                fetch('/start')
+                    .then(response => {
+                        if (response.ok) {
+                            startButton.textContent = 'Stop Device Agent';
+                            startButton.classList.add('stop');
+                            document.getElementById('info-box').textContent = 'Device Agent is running';
+                            document.getElementById('info-box').classList.add('active');
+                            processId = response.processId; // or however you store the process ID
+                        } else {
+                            console.error('Error starting device agent:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error starting device agent:', error);
+                    });
+            } else {
+                fetch('/stop')
+                    .then(response => {
+                        if (response.ok) {
+                            startButton.textContent = 'Start Device Agent';
+                            startButton.classList.remove('stop');
+                            document.getElementById('info-box').textContent = '';
+                            document.getElementById('info-box').classList.remove('active');
+                            processId = null;
+                        } else {
+                            console.error('Error stopping device agent:', response.statusText);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error stopping device agent:', error);
+                    });
+            }
+        });
+
+        // Function to check the status of the device agent process
+        function checkProcessStatus() {
+            fetch('/status')
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('Error getting process status');
+                    }
+                })
+                .then(data => {
+                    if (data.status === 'running') {
+                        startButton.textContent = 'Stop Device Agent';
+                        startButton.classList.add('stop');
+                        document.getElementById('info-box').textContent = 'Device Agent is running';
+                        document.getElementById('info-box').classList.add('active');
+                        //infoBox.classList.add('active');
+                        processId = data.processId;
+                    } else {
+                        startButton.textContent = 'Start Device Agent';
+                        startButton.classList.remove('stop');
+                        document.getElementById('info-box').textContent = '';
+                        document.getElementById('info-box').classList.remove('active');
+                        //infoBox.classList.remove('active');
+                        processId = null;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+        // Check the status of the device agent process on page reload
+        window.addEventListener('load', checkProcessStatus);
+        // Check the status of the device agent process every 5 seconds
+        setInterval(checkProcessStatus, 10000);
+
     </script>
 </body>
 

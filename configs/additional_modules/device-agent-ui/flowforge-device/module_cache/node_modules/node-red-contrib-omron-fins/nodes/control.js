@@ -1,0 +1,281 @@
+/* eslint-disable no-inner-declarations */
+/*
+MIT License
+
+Copyright (c) 2019, 2020, 2021 Steve-Mcl
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+module.exports = function (RED) {
+    const connection_pool = require('../connection_pool.js');
+    const commandTypes = ['connect', 'disconnect', 'status', 'cpu-unit-data-read', 'stop', 'run', 'clock-read', 'clock-write'];
+    function omronControl(config) {
+        RED.nodes.createNode(this, config);
+        const node = this;
+        node.name = config.name;
+        node.topic = config.topic;
+        node.connection = config.connection;
+        node.clock = config.clock || 'clock';
+        node.clockType = config.clockType || 'msg';
+        node.connectOptions = config.connectOptions || 'connectOptions';
+        node.connectOptionsType = config.connectOptionsType || 'msg';
+        node.command = config.command || 'status';
+        node.commandType = config.commandType || 'status';
+        node.msgProperty = config.msgProperty || 'payload';
+        node.msgPropertyType = config.msgPropertyType || 'str';
+        node.connectionConfig = RED.nodes.getNode(node.connection);
+
+        /* ****************  Listeners **************** */
+        function onClientError(error, seq) {
+            node.status({ fill: 'red', shape: 'ring', text: 'error' });
+            node.error(error, (seq && seq.tag ? seq.tag : seq));
+        }
+        function onClientFull() {
+            node.throttleUntil = Date.now() + 1000;
+            node.warn('Client buffer is saturated. Requests for the next 1000ms will be ignored. Consider reducing poll rate of operations to this connection.');
+            node.status({ fill: 'red', shape: 'dot', text: 'queue full' });
+        }
+        // eslint-disable-next-line no-unused-vars
+        function onClientOpen(remoteInfo) {
+            node.status({ fill: 'green', shape: 'dot', text: 'connected' });
+        }
+        function onClientClose() {
+            node.status({ fill: 'yellow', shape: 'dot', text: 'not connected' });
+        }
+        // eslint-disable-next-line no-unused-vars
+        function onClientInit(options) {
+            node.status({ fill: 'grey', shape: 'dot', text: 'initialised' });
+        }
+
+        function removeAllListeners() {
+            if(node.client) {
+                node.client.off('error', onClientError);
+                node.client.off('full', onClientFull);
+                node.client.off('open', onClientOpen);
+                node.client.off('close', onClientClose);
+                node.client.off('initialised', onClientInit);
+            }
+        }
+
+        /* ****************  Node status **************** */
+        function nodeStatusError(err, msg, statusText) {
+            if (err) {
+                node.error(err, msg);
+            } else {
+                node.error(statusText, msg);
+            }
+            node.status({ fill: 'red', shape: 'dot', text: statusText });
+        }
+
+        if (this.connectionConfig) {
+            node.status({ fill: 'yellow', shape: 'ring', text: 'initialising' });
+            if(node.client) {
+                node.client.removeAllListeners();
+            }
+            node.client = connection_pool.get(node, node.connectionConfig);
+            this.client.on('error', onClientError);
+            this.client.on('full', onClientFull);
+            this.client.on('open', onClientOpen);
+            this.client.on('close', onClientClose);
+            this.client.on('initialised', onClientInit);
+
+            function finsReply(err, sequence) {
+                if (!err && !sequence) {
+                    return;
+                }
+                const origInputMsg = (sequence && sequence.tag) || {};
+                try {
+                    if(sequence) {
+                        if (err || sequence.error) {
+                            nodeStatusError(((err && err.message) || "error"), origInputMsg, ((err && err.message) || "error") );
+                            return;
+                        }
+                        if (sequence.timeout) {
+                            nodeStatusError('timeout', origInputMsg, 'timeout');
+                            return;
+                        }
+                        if (sequence.response && sequence.sid != sequence.response.sid) {
+                            nodeStatusError(`SID does not match! My SID: ${sequence.sid}, reply SID:${sequence.response.sid}`, origInputMsg, 'Incorrect SID')
+                            return;
+                        }
+                    }
+                    if (!sequence || !sequence.response || sequence.response.endCode !== '0000' || sequence.response.command.commandCode !== sequence.request.command.commandCode) {
+                        var ecd = 'bad response';
+                        if (sequence.response.command.commandCode !== sequence.request.command.commandCode)
+                            ecd = `Unexpected response. Expected command '${sequence.request.command.commandCode}' but received '${sequence.request.command.commandCode}'`;
+                        else if (sequence.response && sequence.response.endCodeDescription)
+                            ecd = sequence.response.endCodeDescription;
+                        nodeStatusError(`Response is NG! endCode: ${sequence.response ? sequence.response.endCode : '????'}, endCodeDescription:${sequence.response ? sequence.response.endCodeDescription : ''}`, origInputMsg, ecd);
+                        return;
+                    }
+                    let payload;
+                    switch (sequence.request.command.name) {
+                    case 'connect':
+                    case 'disconnect':
+                        break;
+                    case 'status':
+                    case 'cpu-unit-data-read':
+                    case 'clock-read':
+                        payload = sequence.response.result;
+                        break;
+                    default:
+                        payload = sequence.response.sid
+                        break;
+                    }
+
+                    //set the output property
+                    RED.util.setObjectProperty(origInputMsg, node.msgProperty, payload, true);
+
+                    //include additional detail in msg.fins
+                    origInputMsg.fins = {};
+                    origInputMsg.fins.name = node.name; //node name for user logging / routing
+                    origInputMsg.fins.request = {
+                        command: sequence.request.command,
+                        options: sequence.request.options,
+                        sid: sequence.request.sid,
+                    };
+                    origInputMsg.fins.connectionInfo = node.client.connectionInfo;
+                    origInputMsg.fins.response = sequence.response;
+                    origInputMsg.fins.stats = sequence.stats;
+                    origInputMsg.fins.createTime = sequence.createTime;
+                    origInputMsg.fins.replyTime = sequence.replyTime;
+                    origInputMsg.fins.timeTaken = sequence.timeTaken;
+
+                    node.status({ fill: 'green', shape: 'dot', text: 'done' });
+                    node.send(origInputMsg);
+                } catch (error) {
+                    nodeStatusError(error, origInputMsg, 'error');
+                }
+            }
+
+            this.on('close', function (done) {
+                removeAllListeners();
+                if (done) done();
+            });
+
+            this.on('input', function (msg) {
+                if (node.throttleUntil) {
+                    if (node.throttleUntil > Date.now()) return; //throttled
+                    node.throttleUntil = null; //throttle time over
+                }
+                node.status({});//clear status
+
+                let command = '';
+                if (commandTypes.indexOf(node.commandType + '') >= 0) {
+                    command = node.commandType;
+                } else {
+                    command = RED.util.evaluateNodeProperty(node.command, node.commandType, node, msg);
+                }
+
+                if (commandTypes.indexOf(command+'') < 0) {
+                    nodeStatusError(`command '${command?command:''}' is not valid`, msg, `command '${command?command:''}' is not valid`);
+                    return;
+                }
+
+                let clientFn;
+                let clockWriteData;
+                let connectOptions;
+                const params = [];
+                switch (command) {
+                case 'connect':
+                    connectOptions = RED.util.evaluateNodeProperty(node.connectOptions, node.connectOptionsType, node, msg);
+                    if(connectOptions) {
+                        if( typeof connectOptions != "object") {
+                            nodeStatusError("Connect Options must be an object", msg, "error");
+                            return;
+                        } else {
+                            params.push(connectOptions.host);
+                            params.push(connectOptions.port);
+                            params.push(connectOptions);
+                        }
+                    }
+                    clientFn = node.client.connect;
+                    break;
+                case 'disconnect':
+                case 'status':
+                case 'stop':
+                case 'run':
+                    clientFn = node.client[command];
+                    break;
+                case 'cpu-unit-data-read':
+                    clientFn = node.client.cpuUnitDataRead;
+                    break;
+                case 'clock-read':
+                    clientFn = node.client.clockRead;
+                    break;
+                case 'clock-write':
+                    try {
+                        clockWriteData = RED.util.evaluateNodeProperty(node.clock, node.clockType, node, msg);
+                        if(!clockWriteData || typeof clockWriteData != "object") {
+                            throw new Error();
+                        }
+                        clientFn = node.client.clockWrite;
+                        params.push(clockWriteData);
+                    } catch (error) {
+                        nodeStatusError("Cannot set clock. Clock Value is missing or invalid.", msg, "Clock Value is missing or invalid");
+                        return;
+                    }
+                    break;
+                }
+
+                const opts = {};
+                let sid;
+                try {
+                    opts.callback = finsReply;
+                    if(params.length) {
+                        sid = clientFn(...params, opts, msg);
+                    } else {
+                        sid = clientFn(opts, msg);
+                    }
+                    if (sid > 0) {
+                        node.status({ fill: 'yellow', shape: 'ring', text: 'reading' });
+                    }
+                } catch (error) {
+                    node.sid = null;
+                    if(error.message == "not connected") {
+                        node.status({ fill: 'yellow', shape: 'dot', text: error.message });
+                    } else {
+                        nodeStatusError(error, msg, 'error');
+                        const debugMsg = {
+                            info: "control.js-->on 'input'",
+                            connection: `host: ${node.connectionConfig.host}, port: ${node.connectionConfig.port}`,
+                            sid: sid,
+                            opts: opts,
+                        };
+                        node.debug(debugMsg);
+                    }
+                    return;
+                }
+
+            });
+            if(node.client && node.client.connected) {
+                node.status({ fill: 'green', shape: 'dot', text: 'connected' });
+            } else {
+                node.status({ fill: 'grey', shape: 'ring', text: 'initialised' });
+            }
+
+        } else {
+            node.status({ fill: 'red', shape: 'dot', text: 'Connection config missing' });
+        }
+    }
+    RED.nodes.registerType('FINS Control', omronControl);
+
+};
+

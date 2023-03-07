@@ -1,0 +1,253 @@
+<!-- 
+MIT License
+
+Copyright (c) 2021 Steve-Mcl
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. 
+-->
+
+<style>
+  .omron-fins-form-row > label {
+    width:120px !important;
+  }
+  .omron-fins-form-row > div.form-tips {
+    display: inline-block !important;
+    border-radius: 4px  !important;
+    margin-top: 4px;
+    width: calc(70% - 18px);
+    overflow: auto;
+  }
+</style>
+
+<script type='text/javascript'>
+
+  RED.nodes.registerType('FINS Control', {
+    category: 'OMRON',
+    color: '#0090d4',
+    defaults: {
+      name: { value: '' },
+      connection: { type: 'FINS Connection', required: true },
+      clockType: { value: 'msg' },
+      clock: { value: 'clock', required: false },
+      connectOptionsType: { value: 'none' },
+      connectOptions: { required: false },
+      msgPropertyType: { value: 'msg' },
+      msgProperty: { value: 'payload', validate: RED.validators.typedInput('msgPropertyType') },
+      commandType: { value: 'status' },
+      command: { value: 'status', required: false },
+    },
+    inputs: 1,
+    outputs: 1,
+    inputLabels: 'Trigger request',
+    outputLabels: 'Returned values',
+    align: 'left',
+    icon: 'read.png',
+    label: function () {
+      return this.name || (['connect', 'disconnect', 'status','cpu-unit-data-read', 'stop', 'run', 'clock-read', 'clock-write'].indexOf(this.commandType) >= 0 ? this.commandType : 'FINS Control');
+    },
+    oneditprepare: function () {
+      var node = this;
+      function setupTypedInput(varName, types, def) {
+        let varSel = '#node-input-' + varName;
+        let typeSel = varSel + 'Type';
+        let varVal = node[varName];
+        let typeVal = node[varName + 'Type'];
+
+        if (typeVal == null || typeVal === 'none') {
+          typeVal = def;
+        } else if (typeVal === 'string') {
+          typeVal = 'str';
+        } else if (typeVal === 'number') {
+          typeVal = 'num';
+        }
+        $(typeSel).val(typeVal);
+        $(varSel).typedInput({
+          default: def,
+          typeField: $(typeSel),
+          types: types
+        });
+        return $(varSel).typedInput('type', typeVal);
+      }
+
+      setupTypedInput('connectOptions', [{value:'none', label:'none (use existing connection options)', hasValue: false }, 'msg', 'flow', 'global'], 'none');
+      setupTypedInput('clock', ['json', 'msg', 'flow', 'global'], 'json');
+      setupTypedInput('msgProperty', ['msg'], 'msg');
+
+      const controlOption = {
+        "connect": { label: 'Connect to PLC', value: 'connect', title: 'Connect/reconnect to PLC. If "Connect Opts" are provided, its properties will be merged with existing connection options. See built in help for more info.', hasValue: false},
+        "disconnect": { label: 'Disconnect PLC', value: 'disconnect', title: 'Disconnect from PLC', hasValue: false},
+        "status": { label: 'Read CPU UNIT Status', value: 'status', title: 'Gets the PLC status and returns it to the msg property specified by "Output property"', hasValue: false},
+        "cpu-unit-data-read": { label: 'Read CPU UNIT DATA', value: 'cpu-unit-data-read', title: 'Gets the PLC unit data (PLC Mode, Version, UNITS fitted etc) and returns it to the msg property specified by "Output property"', hasValue: false},
+        "stop": { label: 'Set PLC Mode to STOP/PROGRAM', value: 'stop', title: 'Sets the PLC to STOP/PROGRAM mode.', hasValue: false},
+        "run": { label: 'Set PLC Mode to RUN/MONITOR', value: 'run', title: 'Sets the PLC to RUN/MONITOR mode.', hasValue: false},
+        "clock-read": { label: 'Read the PLC clock', value: 'clock-read', title: 'Gets the PLC Clock.', hasValue: false},
+        "clock-write": { label: 'Set the PLC clock', value: 'clock-write', title: 'Sets the PLC Clock to value in the clock field. See built in help for more info.', hasValue: false},
+      }
+
+      const commandOptions =  Object.values(controlOption);
+      commandOptions.push('msg', 'flow', 'global', 'env');
+      const $commandField = setupTypedInput('command', commandOptions, 'status');
+
+      $commandField.on("change", function() {
+        let t = $commandField.typedInput('type') || '';
+        if(['clock-write','msg','flow','global','env'].indexOf(t) >= 0){
+          $('#node-red-contrib-omron-fins-control-clock-row').show();
+          $('#node-red-contrib-omron-fins-control-clock-row div.red-ui-typedInput-container.input-error').removeClass('input-error')
+        } else {
+          $('#node-red-contrib-omron-fins-control-clock-row').hide();
+        }
+        if(['connect','msg','flow','global','env'].indexOf(t) >= 0){
+          $('#node-red-contrib-omron-fins-control-connectOptions-row').show(); 
+        } else {
+          $('#node-red-contrib-omron-fins-control-connectOptions-row').hide();
+        }
+        let v = (t && controlOption[t]) ? controlOption[t].title : '';
+        if(!v) {
+          v = 'The variable should resolve to one of the following...';
+          let opts = Object.values(controlOption);
+          opts.forEach(function(e) {
+            v += '<br>• <span style="font-family: monospace; color: var(--red-ui-text-color-code);">' + e.value + "</span> - " + e.label;
+          })
+        }
+        $('#omron-fins-command-tip').html(v)
+      });
+      $commandField.trigger('change');
+
+      
+    },
+    oneditresize() {
+      setTimeout(() => {
+        $('#omron-fins-command-tip').css('max-width', 'unset');
+      }, 250);
+    }
+  });
+</script>
+<script type="text/html" data-template-name="FINS Control">
+  <div class="form-row omron-fins-form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="read.label.name"> Name</span></label>
+    <input style="width:70%" type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <div class="form-row omron-fins-form-row">
+    <label for="node-input-connection"><i class="icon-globe"></i><span data-i18n="read.label.connection"> Connection</span></label>
+    <input style="width:70%" type="text" id="node-input-connection">
+  </div>
+  <div class="form-row omron-fins-form-row">
+    <label for="node-input-msgProperty"><i class="fa fa-sign-out"></i> <span data-i18n="read.label.msgProperty"> Output property</span></label>
+    <input type="hidden" id="node-input-msgPropertyType">
+    <input style="width:70%" type="text" id="node-input-msgProperty" placeholder="payload">
+  </div>  
+  <div class="form-row omron-fins-form-row">
+    <label for="node-input-command"><i class="fa fa-sign-out"></i> <span data-i18n="read.label.command"> Command</span></label>
+    <input type="hidden" id="node-input-commandType">
+    <input style="width:70%" type="text" id="node-input-command" placeholder="">
+    <br>
+    <label>&nbsp;</label>
+    <div id="omron-fins-command-tip" class="form-tips"></div>
+  </div>
+  <div id="node-red-contrib-omron-fins-control-clock-row" class="form-row omron-fins-form-row">
+    <label for="node-input-clock"><i class="fa fa-clock-o"></i> <span data-i18n="read.label.clock"> Clock Value</span></label>
+    <input type="hidden" id="node-input-clockType">
+    <input style="width:70%" type="text" id="node-input-clock" placeholder="{year,month,day,hour,minute,second,day_of_week}">
+  </div> 
+  <div id="node-red-contrib-omron-fins-control-connectOptions-row" class="form-row omron-fins-form-row">
+    <label for="node-input-connectOptions"><i class="fa fa-code"></i> <span data-i18n="read.label.connectOptions"> Connect Opts</span></label>
+    <input type="hidden" id="node-input-connectOptionsType">
+    <input style="width:70%" type="text" id="node-input-connectOptions" placeholder="options">
+  </div>
+</script>
+
+<script type="text/html" data-help-name="FINS Control">
+  <p>A node to operate PLC control commands and status requests</p>
+  <h3>Foreword</h3>
+  <dl class="message-properties">
+    <dd>
+      Example flows have been included to help you get started. 
+      Click the hamburger menu <a class="button" href="#"><i class="fa fa-bars"></i></a>, select <b>import</b> then <b>examples</b> (or press <kbd>ctrl+i</kbd>)
+    </dd>
+  </dl>
+  <h3>Properties</h3>
+  <dl class="message-properties">
+    <dt class="required">Connection<span class="property-type">FINS Connection</span></dt>
+    <dd>The PLC connection</dd>
+    <dt class="required">Output property<span class="property-type">string</span></dt>
+    <dd>Specify where the result should be written</dd>
+    <dt class="required">Command<span class="property-type">string</span></dt>
+    <dd>Specify the type of command.
+      <ul>
+        <li>Connect to PLC: Open the connection to the PLC. If an Connect Opts are provided, it will be merged with existing connection options. See "Connect Options" below. To automate this option, use the string value <code>connect</code></li>
+        <li>Disconnect PLC: Close the connection to the PLC. To automate this option, use the string value <code>disconnect</code></li>
+        <li>Read CPU UNIT Status: Sends a buffer. To automate this option, use the string value <code>status</code></li>
+        <li>Read CPU UNIT Data: Sends an object with PLC address keys and 16 bit signed or true/false bool values in the msg property specified by "Output property". To automate this option, use the string value <code>cpu-unit-data-read</code></li>
+        <li>Set PLC Mode to STOP/PROGRAM: Sends an array of 16 bit signed or true/false bool values in the msg property specified by "Output property". To automate this option, use the string value <code>stop</code></li>
+        <li>Set PLC Mode to RUN/MONITOR: Sends an array of 16 bit unsigned or 1/0 bit values in the msg property specified by "Output property". To automate this option, use the string value <code>run</code></li>
+        <li>Read the PLC clock: Sends the clock parts in an object in the msg property specified by "Output property". To automate this option, use the string value <code>clock-read</code></li>
+        <li>Set the PLC clock: Set the PLC clock to the value of <code>clock</code>. The content of <code>clock</code> must be an object. See "Clock value" below. To automate this option, use the string value <code>clock-write</code></li>
+      </ul>
+    </dd>
+    <dt class="optional">Connect Options<span class="property-type">object</span></dt>
+    <dd>
+      This is only relevant when the command is <code>connect</code><br>
+      If specified, this must be an object containing one or more of the following optional properties which will be merged with existing node options...
+<code><pre>{
+  protocol:string, //udp or tcp
+  MODE:string,     //CP, CV, CS, CJ, NJ, NX
+  host:string,     //IP or hostname
+  port:number,     //udp/tcp port number e.g. 9600
+  DNA:number,      //Dest Network Number
+  DA1:number,      //Dest Node Number 
+  DA2:number,      //Dest Unit Number 
+  SNA:number,      //Source Network Number 
+  SA1:number,      //Source Node Number 
+  SA2:number,      //Source Unit Number
+  timeout: number  //timeout in milliseconds
+}</pre></code>
+      If omitted, the command will use last-set/current options
+    </dd>
+    <dt class="optional">Clock value<span class="property-type">object</span></dt>
+    <dd>
+      This is only relevant when the command is <code>clock-write</code><br>
+      The value to set in the PLC clock must be an object containing the following properties... 
+<code><pre>{
+  year:number,       //2 digit year
+  month:number,      //1~12
+  day:number,        //1~31
+  hour: number,      //0~23
+  minute: number,    //0~59
+  second:number,     //0~59
+  day_of_week:number //0~6
+}</pre></code> (<code>{second}</code> and <code>{day_of_week}</code> are optional)
+    </dd>
+  </dl> 
+  <h3>Output</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">object</span></dt>
+    <dd>
+      <code>payload</code> will contain the value read from PLC (depends the command)...
+      <ul>
+        <li>The <code>status</code> command will return an object with status values from the PLC</li>
+        <li>The <code>cpu-unit-data-read</code> command will return an object with unit statuses values from the PLC</li>
+        <li>The <code>clock-read</code> command will return and object containing the clock values</li>
+        <li>Other commands typically return a positive SID number upon successful operation.</li>
+      </ul>
+      <hr>
+      Additional details are sent in <code>msg.fins</code> - use a debug node set to "show complete message" to inspect the available properties.
+    </dd>
+  </dl>
+
+</script>

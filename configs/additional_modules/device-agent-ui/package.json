@@ -10,10 +10,14 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@flowforge/flowforge-device-agent": "^0.6.0",
     "body-parser": "^1.20.2",
+    "child_process": "^1.0.2",
     "express": "^4.18.2",
     "fs": "^0.0.2",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "path": "^0.12.7",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2"

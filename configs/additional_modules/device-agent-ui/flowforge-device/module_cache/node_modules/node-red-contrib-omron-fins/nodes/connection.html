@@ -1,0 +1,264 @@
+<!-- 
+MIT License
+
+Copyright (c) 2019, 2020, 2021 Steve-Mcl
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. 
+-->
+
+<style>
+    .form-row.node-red-contrib-fins-flags-row > .node-red-contrib-fins-flags {
+        display: inline-block;
+        width: 70%;
+    }
+
+    .form-row.node-red-contrib-fins-flags-row > label {
+        vertical-align: top;
+    }
+    .form-row.node-red-contrib-fins-flags-row > .node-red-contrib-fins-flags > .node-red-contrib-fins-flag > label {
+        display: block;
+        width: 100%;
+    }
+    .form-row.node-red-contrib-fins-flags-row > .node-red-contrib-fins-flags > .node-red-contrib-fins-flag > label > input {
+        position: relative;
+        vertical-align: bottom;
+        top: -2px;
+        width: 15px;
+        height: 15px;
+    }
+</style>
+
+<script type="text/html" data-template-name="FINS Connection">
+<div class="form-row">
+    <label for="node-config-input-name"><i class="icon-tag"></i> <span
+            data-i18n="omron-connection.label.name">Name</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-name" placeholder="Name">
+</div>
+<div class="form-row">
+    <label for="node-config-input-protocol"><i class="fa fa-cogs"></i> <span
+            data-i18n="omron-connection.label.protocol">Protocol</span></label>
+    <input type="text" hidden="true" id="node-config-input-protocolType">
+    <input style="width: 70%;" type="text" id="node-config-input-protocol">
+</div>
+<div class="form-row">
+    <label for="node-config-input-MODE"><i class="fa fa-dot-circle-o"></i> <span
+            data-i18n="omron-connection.label.MODE">MODE</span></label>
+    <input type="text" hidden="true" id="node-config-input-MODEType">
+    <input style="width: 70%;" type="text" id="node-config-input-MODE">
+</div>
+<div class="form-row">
+    <label for="node-config-input-host"><i class="icon-globe"></i> <span
+            data-i18n="omron-connection.label.host">Host</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-host" placeholder="192.168.x.x">
+</div>
+<div class="form-row">
+    <label for="node-config-input-port"><i class="fa fa-random"></i> <span
+            data-i18n="omron-connection.label.port">Port</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-port" placeholder="9600">
+</div>
+<div class="form-row">
+    <label for="node-config-input-ICF" title="Information Control Field: Default = 0x80"><i class="fa fa-cog"></i> <span
+            data-i18n="omron-connection.label.ICF">ICF</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-ICF" placeholder="e.g. 0x80 (0x80 is normal default)">
+</div>
+<div class="form-row">
+    <label for="node-config-input-DNA" title="Destination Network Address: Enter 0 for Local, 0x1~0x7f for remote"><i
+            class="fa fa-cog"></i> <span data-i18n="omron-connection.label.DNA">DNA</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-DNA" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row">
+    <label for="node-config-input-DA1" title="Destination Node: Enter 0 for internal"><i class="fa fa-cog"></i> <span
+            data-i18n="omron-connection.label.DA1">DA1</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-DA1" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row">
+    <label for="node-config-input-DA2"
+        title="Destination Unit: Enter 0 for CPU, 10 to 1F for CPU BUS Unit (10+Unit), E1 for inner board"><i
+            class="fa fa-cog"></i> <span data-i18n="omron-connection.label.DA2">DA2</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-DA2" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row">
+    <label for="node-config-input-SNA" title="Source Network Address: Enter 0 for Local, 0x1~0x7f for remote"><i
+            class="fa fa-cog"></i> <span data-i18n="omron-connection.label.SNA">SNA</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-SNA" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row">
+    <label for="node-config-input-SA1" title="Source Node: Enter 0 for internal"><i class="fa fa-cog"></i> <span
+            data-i18n="omron-connection.label.SA1">SA1</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-SA1" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row">
+    <label for="node-config-input-SA2"
+        title="Source Unit: Enter 0 for CPU, 10 to 1F for CPU BUS Unit (10+Unit), E1 for inner board"><i
+            class="fa fa-cog"></i> <span data-i18n="omron-connection.label.SA2">SA2</span></label>
+    <input style="width: 70%;" type="text" id="node-config-input-SA2" placeholder="e.g. 0x0" />
+</div>
+<div class="form-row node-red-contrib-fins-flags-row">
+    <label for="node-input-nl"><i class="fa fa-flag"></i> <span
+            data-i18n="node-red:mqtt.label.flags">Flags</span></label>
+    <div class="node-red-contrib-fins-flags">
+        <div class="node-red-contrib-fins-flag">
+            <label for="node-config-input-autoConnect">
+                <input type="checkbox" id="node-config-input-autoConnect" autocomplete="off">
+                <span data-i18n="omron-connection.label.autoConnect"> Auto Connect</span>
+            </label>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div id="omron-fins-connection-tip" style="display: inline-block;width: calc(100% - 20px) !important;" class="form-tips">
+        See the <span id="omron-fins-connection-help-link" style="text-decoration: underline;">built in help</span> on the side-bar for a description of each control parameter. 
+        See the <a href="https://flows.nodered.org/node/node-red-contrib-omron-fins" target="_blank">readme <i class="fa fa-external-link"></i></a> for additional help.
+    </div>
+</div>
+</script>
+
+<script type="text/html" data-help-name="FINS Connection">
+<p>FINS Connection</p>
+<h3>Notes</h3>
+<dt>Environment Variables</dt>
+<dd>Text fields (Host, Port, ICF, DNA, DA1, DA2, SNA, SA1, SA2) can be environment variables e.g. ${PLC_PORT}</dd>
+
+<h3>Details</h3>
+
+<dt>ICF</dt>
+<dd>Information Control Field: Default = 0x80</dd>
+
+<dt>DNA</dt>
+<dd>
+    Destination Network Address: Enter 0 for "this network", 0x1~0x7f for remote
+</dd>
+
+<dt>DA1</dt>
+<dd>
+    Destination Node: Enter 0 for "this node". Often this is set to the value of the last octet of the PLCs IP Address.
+    Ultimately, if none zero, it should match the node number set on the PLC.
+</dd>
+
+<dt>DA2</dt>
+<dd>
+    Destination Unit: Enter 0 for CPU, 10 to 1F for CPU BUS Unit (10+Unit), E1 for inner board
+</dd>
+
+<dt>SNA</dt>
+<dd>
+    Source Network Address: Enter 0 for "this network", 0x1~0x7f for remote. Check the PLC Network Routing table.
+</dd>
+
+<dt>SA1</dt>
+<dd>
+    Source Node: For direct communication, try entering 0 or setting it to the value of last octet of node-red IP
+    Address.
+    Depending on the network subnet mask and the FINS conversion method setting, it may be necessary to enter the
+    node-red IP and Node Address number in the PLC FINS/UDP IP Address Table
+</dd>
+
+<dt>SA2</dt>
+<dd>
+    Source Unit: Enter 0 for CPU, 10 to 1F for CPU BUS Unit (10+Unit), E1 for inner board
+</dd>
+
+<dt>Auto Connect</dt>
+<dd>
+    If Auto Connect is checked, the connection to the PLC will be made automatically.  If Auto Connect is not checked, you can use a "FINS Control" node to connect to the PLC. This is useful for connecting to a dynamic connection by providing (optional) host/port/fins settings. 
+</dd>
+
+</script>
+
+<script type="text/javascript">
+(function(){
+    let resizeOk = false;
+    function showSidebarHelpPanel(){ 
+        if(RED.sidebar.help) {
+            RED.sidebar.help.show();//  >= V1.1.0
+        } else {
+            RED.sidebar.show("info");// <  V1.1.0
+        }
+    }
+    RED.nodes.registerType('FINS Connection', {
+        category: 'config',
+        color: '#0090d4',
+        icon: "connection.png",
+        defaults: {
+            name: { value: "" },
+            host: { value: "192.168.0.1", required: true },
+            port: { value: 9600, required: true/*, validate: RED.validators.number()*/ },
+            MODE: { value: "" },
+            MODEType: { value: "CS" },
+            protocol: { value: "" },
+            protocolType: { value: "udp" },
+            ICF: { value: 0x80 },//, validate: RED.validators.number() },
+            DNA: { value: 0x0 },//, validate: RED.validators.number() },
+            DA1: { value: 0x0 },//, validate: RED.validators.number() },
+            DA2: { value: 0x0 },//, validate: RED.validators.number() },
+            SNA: { value: 0x0 },//, validate: RED.validators.number() },
+            SA1: { value: 0x0 },//, validate: RED.validators.number() },
+            SA2: { value: 0x0 },//, validate: RED.validators.number() },
+            autoConnect: { value: false }
+        },
+        label: function () {
+            return this.name || ((this.host && this.port) ? this.host + ":" + this.port : "FINS Connection");
+        },
+        oneditprepare() {
+            const node = this;
+            resizeOk = true;
+            node.autoConnect = node.autoConnect == null ? true: node.autoConnect;
+            $('#omron-fins-connection-help-link').on("click", function() {
+                showSidebarHelpPanel();
+            });
+            $("#node-config-input-autoConnect").prop('checked', node.autoConnect);
+            $("#node-config-input-protocol").typedInput({
+                default: 'udp',
+                types: [
+                    { label: "udp", value: 'udp', hasValue: false },
+                    { label: "tcp", value: 'tcp', hasValue: false },
+                    "env",
+                ],
+                typeField: $("#node-config-input-protocolType")
+            })
+
+            if(!node.MODEType && (node.MODE == "CSCJ" || node.MODE == "NJNX" || node.MODE == "CV")) {
+                node.MODEType = node.MODE.substr(0,2);
+                $("#node-config-input-MODEType").val(node.MODEType);
+            }
+            $("#node-config-input-MODE").typedInput({
+                default: 'CJ',
+                types: [
+                    { value: "CV", label: 'CV', hasValue: false },
+                    { value: "CS", label: 'CS', hasValue: false },
+                    { value: "CJ", label: 'CJ', hasValue: false },
+                    { value: "CP", label: 'CP', hasValue: false },
+                    { value: "NJ", label: 'NJ', hasValue: false },
+                    { value: "NX", label: 'NX', hasValue: false },
+                    "env",
+                ],
+                typeField: $("#node-config-input-MODEType")
+            })
+        },
+        oneditresize() {
+            if(resizeOk) {
+                resizeOk = false;
+                setTimeout(() => {
+                    $('#omron-fins-connection-tip').css('max-width', 'unset');
+                }, 300);
+            }
+        }
+    });
+})();
+</script>
