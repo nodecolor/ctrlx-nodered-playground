@@ -95,6 +95,11 @@ parts:
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-ctrlx-automation
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-tools-plugin
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-theme
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/flowforge-device-agent
+      
+      # Config of FlowForge device agent
+      sudo mkdir /opt/flowforge-device
+      sudo chown -R $USER /opt/flowforge-device
 
       # install auth module
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/node-red-auth-ctrlx-automation | tail -1)
