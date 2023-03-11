@@ -1,14 +1,19 @@
 {
   "name": "device-agent-ui",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "User interface for FlowForge Device Agent",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
+  "keywords": [
+    "flowforge",
+    "device agent",
+    "user interface",
+    "node-red"
+  ],
+  "author": "MarianRaphael",
+  "license": "Apache-2.0",
   "dependencies": {
     "@flowforge/flowforge-device-agent": "^0.6.0",
     "body-parser": "^1.20.2",
@@ -20,6 +25,11 @@
     "socket.io": "^4.6.1"
   },
   "devDependencies": {
-    "@types/body-parser": "^1.19.2"
+    "@types/body-parser": "^1.19.2",
+    "prettier": "^2.8.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MarianRaphael/flowforge-device-agent-ui.git"
   }
 }
