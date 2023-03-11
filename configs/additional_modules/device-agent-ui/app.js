@@ -4,14 +4,14 @@ const path = require("path");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const { spawn } = require("child_process");
-const configYml = "./config.yml";
+const configYml = path.join(__dirname, "config.yml");
 
 // Define the path for the Unix socket file
-const socketPath = `${process.env.SNAP_DATA}/package-run/ctrlx-node-red-flowforge/web.sock`;
+const sockDir = `${process.env.SNAP_DATA}/package-run/ctrlx-node-red-flowforge/`;
+const socketPath = `${sockDir}web.sock`;
 
-// Remove the previous socket file, if it exists
-if (fs.existsSync(socketPath)) {
-  fs.unlinkSync(socketPath);
+if (!fs.existsSync(sockDir)) {
+  fs.mkdirSync(sockDir, { recursive: true });
 }
 
 app.use(express.static(path.join("./")));
