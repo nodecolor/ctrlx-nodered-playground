@@ -77,6 +77,22 @@ function stopDeviceAgent(req, res) {
   res.send("Device agent stopped successfully");
 }
 
+function resetDeviceAgent(req, res) {
+  const exec = require("child_process").exec;
+  exec(`kill ${processId}`);
+  exec(`find ${dirPath} -mindepth 1 -maxdepth 1 ! -name module_cache -exec rm -r {} \ +`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(`exec error: ${err}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.error(`stderr: ${stderr}`);
+    console.log(`Reset successful`);
+  });
+  res.send("Device agent reset successfully");
+}
+
+app.get("/reset", resetDeviceAgent);
 app.get("/start", startDeviceAgent);
 app.get("/stop", stopDeviceAgent);
 

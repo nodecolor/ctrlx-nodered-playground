@@ -1,138 +1,255 @@
 body {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #333;
-        }
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #FFFFFF;
+    background-color: #1F2937;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('./images/ff-cloud_50.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 32px;
-            color: #343a40;
-        }
+  .container:nth-child(2) {
+    margin-top: 20px;
+  }
 
-        label {
-            display: block;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #343a40;
-        }
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 0px;
+    margin-bottom: 32px;
+    color: #FFFFFF;
+  }
+  
+  label {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+  }
+  
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  
+  .checkbox-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .checkbox-row label {
+    margin-bottom: 0;
+    color: #FFFFFF;
+  }
+  
+  .checkbox-row a {
+    color: #FFFFFF;
+  }
+  
+  .button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #FFFFFF;
+    background-color: #4B5563;
+    background-clip: padding-box;
+    border: 1px solid #4B5563;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    max-width: 600px;
+    margin-bottom: 16px;
+  }
+  
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #34AAAF;
+    box-shadow: 0 0 0 .2rem rgba(52, 170, 175, .25);
+  }
+  
+  input[type="submit"],
+  button {
+    display: inline-block;
+    padding: 6px 16px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #FFFFFF;
+    background-color: #34AAAF;
+    border: 1px solid #34AAAF;
+    border-radius: .25rem;
+    transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    cursor: pointer;
+  }
+  
+  input[type="submit"] {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  button#start-agent-btn {
+    flex: 1;
+    margin-left: 10px;
+  }
+  
+  input[type="submit"]:hover,
+  button:hover {
+    background-color: #248B8B;
+    border-color: #248B8B;
+  }
+  
+  input[type="submit"]:focus,
+  button:focus {
+    box-shadow: 0 0 0 .2rem rgba(52, 170, 175, .5);
+  }
+  
+  button#start-agent-btn.stop {
+    background-color: #AA4444;
+    border-color: #AA4444
+}
 
-        input[type="text"] {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
+button#start-agent-btn.stop:hover {
+background-color: #CC5555;
+border-color: #CC5555;
+}
 
-        input[type="password"] {
-            display: block;
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
-            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
+.logo {
+display: inline-block;
+height: 40px;
+margin-right: 16px;
+margin-bottom: 6px;
+vertical-align: middle;
+}
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #80bdff;
-            box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
-        }
+input[type="checkbox"] {
+margin-right: 8px;
+height: 20px;
+width: 20px;
+}
 
-        input[type="submit"] {
-            display: inline-block;
-            padding: 6px 16px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            background-color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: .25rem;
-            transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-            cursor: pointer;
-        }
+label[for="moduleCache"] {
+display: inline-block;
+margin-bottom: 0px;
+color: #FFFFFF;
+}
 
-        button {
-            display: inline-block;
-            padding: 6px 16px;
-            font-size: 16px;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            background-color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: .25rem;
-            transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-            cursor: pointer;
-        }
+input[type="checkbox"]:focus {
+outline: none;
+}
 
-        button#start-agent-btn.stop {
-            background-color: #AA4444;
-            border-color: #AA4444;
-        }
+input[type="checkbox"]:checked+label {
+font-weight: 700;
+color: #FFFFFF;
+}
 
-        button#start-agent-btn.stop:hover {
-            background-color: #AA4444;
-            border-color: #AA4444;
-        }
+.info-box {
+background-color: #4B5563;
+color: #FFFFFF;
+padding: 10px;
+margin-top: 20px;
+text-align: center;
+width: 100%;
+justify-content: center;
+}
 
-        input[type="submit"]:hover {
-            background-color: #0069d9;
-            border-color: #0062cc;
-        }
+button#reset-agent-btn {
+background-color: #CC5555;
+border-color: #CC5555;
+width: 80%;
+padding: 10px;
+margin-top: 20px;
+align-self: center;
+}
 
-        input[type="submit"]:focus {
-            box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5);
-        }
+button#reset-agent-btn:hover {
+background-color: #AA4444;
+border-color: #AA4444;
+}
 
-        .logo {
-            display: inline-block;
-            height: 40px;
-            margin-right: 16px;
-            vertical-align: middle;
-        }
+/* Customize the appearance of the confirmation dialog */
+body {
+--modal-background-color: rgba(0, 0, 0, 0.5);
+--modal-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
 
-        input[type="checkbox"] {
-            margin-right: 8px;
-        }
+/* Style the modal backdrop */
+.confirmation-modal-backdrop {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: var(--modal-background-color);
+z-index: 999;
+display: flex;
+justify-content: center;
+align-items: center;
+}
 
-        label[for="moduleCache"] {
-            display: inline-block;
-            margin-bottom: 8px;
-            color: #343a40;
-        }
+/* Style the modal box */
+.confirmation-modal-box {
+background-color: #1F2937;
+color: #FFFFFF;
+padding: 20px;
+box-shadow: var(--modal-box-shadow);
+max-width: 600px;
+width: 90%;
+text-align: center;
+}
 
-        input[type="checkbox"]:focus {
-            outline: none;
-        }
+/* Style the modal buttons */
+.confirmation-modal-box button {
+display: inline-block;
+padding: 6px 16px;
+font-size: 16px;
+font-weight: 400;
+line-height: 1.5;
+color: #FFFFFF;
+background-color: #34AAAF;
+border: 1px solid #34AAAF;
+border-radius: .25rem;
+transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+cursor: pointer;
+margin: 10px;
+}
 
-        input[type="checkbox"]:checked+label:before {
-            content: "\2714";
-            font-size: 16px;
-            color: #007bff;
-            margin-right: 8px;
-        }
+.confirmation-modal-box button:hover {
+background-color: #248B8B;
+border-color: #248B8B;
+}
 
-        input[type="checkbox"]:checked+label {
-            font-weight: 700;
-            color: #343a40;
-        }
+.confirmation-modal-box button:focus {
+box-shadow: 0 0 0 .2rem rgba(52, 170, 175, .5);
+}  
