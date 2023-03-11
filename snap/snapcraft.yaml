@@ -95,13 +95,13 @@ parts:
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-ctrlx-automation
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-tools-plugin
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/nr-theme
-      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install @flowforge/flowforge-device-agent
 
       # install auth module
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/node-red-auth-ctrlx-automation | tail -1)
       
-      # install device-agent-ui
-      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/device-agent-ui | tail -1)
+      # install device-agent
+      npm install --no-audit --no-fund --prefix $SNAPCRAFT_PART_INSTALL/lib @flowforge/flowforge-device-agent
+      npm install --no-audit --no-fund --prefix $SNAPCRAFT_PART_INSTALL/lib $(npm pack ./configs/additional_modules/device-agent-ui | tail -1)
 
       # modify node_modules
       find $SNAPCRAFT_PART_INSTALL -type f -name '*.js.swp' -delete
