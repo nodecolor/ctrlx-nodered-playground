@@ -1,0 +1,25 @@
+name: snapbuild-ctrlx
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Let's build for amd64 and arm64 see ctrlx requirements
+        platform:
+        - amd64
+    steps:
+    # Checkout the code
+    - uses: actions/checkout@v3
+    - uses: docker/setup-qemu-action@v2
+      with:
+        platforms: ${{ matrix.platform }}
+    - uses: diddlesnaps/snapcraft-multiarch-action@v1
+      id: snapcraft
+      with:
+        architecture: ${{ matrix.platform }}
+    - uses: actions/upload-artifact@v3
+      with:
+        name: snap
+        path: ${{ steps.snapcraft.outputs.snap }}
