@@ -34,9 +34,9 @@
         ]
       },
       {
-        "name": "ctrlx-node-red-flowforge.agent",
-        "url": "/node-red-device",
-        "binding": "unix://{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/ctrlx-node-red-flowforge.agent.sock"
+        "name": "ctrlx-node-red-flowforge.web.sock",
+        "url": "/node-red-configuration",
+        "binding": "unix://{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/web.sock"
       }
     ]
   },
@@ -89,9 +89,9 @@
             "permissions": []
           },
           {
-            "id": "ctrlx-node-red-flowforge.agent",
+            "id": "ctrlx-node-red-flowforge.web.sock",
             "title": "Device Agent",
-            "link": "/node-red-device",
+            "link": "/node-red-configuration",
             "permissions": []
           }
         ]

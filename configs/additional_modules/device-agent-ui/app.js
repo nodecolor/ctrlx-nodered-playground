@@ -7,7 +7,7 @@ const { spawn } = require("child_process");
 const configYml = "./config.yml";
 
 // Define the path for the Unix socket file
-const socketPath = `unix://${process.env.SNAP_DATA}/package-run/ctrlx-node-red-flowforge/ctrlx-node-red-flowforge.agent.sock`;
+const socketPath = `${process.env.SNAP_DATA}/package-run/ctrlx-node-red-flowforge/web.sock`;
 
 // Remove the previous socket file, if it exists
 if (fs.existsSync(socketPath)) {
