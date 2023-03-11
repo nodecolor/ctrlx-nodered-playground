@@ -15,7 +15,7 @@ architectures:
 apps:
 
   node-red:
-    command: bin/startNR && bin/startDA
+    command: sh -c 'bin/startNR && bin/startDA'
     daemon: simple
     restart-condition: on-failure
     passthrough:
