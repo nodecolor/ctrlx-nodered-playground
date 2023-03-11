@@ -15,7 +15,7 @@ architectures:
 apps:
 
   node-red:
-    command: sh -c 'bin/startNR && bin/startDA'
+    command: bin/startApp
     daemon: simple
     restart-condition: on-failure
     passthrough:
@@ -143,6 +143,7 @@ parts:
       startNR.sh: "bin/startNR"
       desktop-launch: "bin/desktop-launch"
       startDA.sh: "bin/startDA"
+      startApp.sh: "bin/startApp"
   configs:
    source: ./configs
    plugin: dump
