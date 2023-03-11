@@ -36,7 +36,7 @@
       {
         "name": "ctrlx-node-red-flowforge.web.sock",
         "url": "/node-red-configuration",
-        "binding": "unix://{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/web.sock"
+        "binding": "unix:/{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/web.sock"
       }
     ]
   },
@@ -92,6 +92,7 @@
             "id": "ctrlx-node-red-flowforge.web.sock",
             "title": "Device Agent",
             "link": "/node-red-configuration",
+            "target": "ctrlx-node-red-flowforge.web.sock",
             "permissions": []
           }
         ]
