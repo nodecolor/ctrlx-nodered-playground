@@ -1,4 +1,4 @@
-name: snapbuild-ctrlx
+name: snapbuild-ctrlx-dev
 on:
   workflow_dispatch:
 jobs:
