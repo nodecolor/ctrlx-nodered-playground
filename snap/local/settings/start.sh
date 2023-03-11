@@ -23,3 +23,4 @@ echo USERDIR: $USERDIR
 echo ----------------------------------
 
 "$SNAP"/bin/node "$SNAP"/lib/node_modules/.bin/node-red -s "$SETTINGS" -u "$USERDIR"
+"$SNAP"/bin/node "$SNAP"/lib/node_modules/device-agent-ui/app.js"

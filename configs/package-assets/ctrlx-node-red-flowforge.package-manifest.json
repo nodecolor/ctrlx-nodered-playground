@@ -23,26 +23,22 @@
         ]
       },
       {
+        "name": "ctrlx-device-agent-flowforge.web",
+        "url": "/device-agent",
+        "binding": ":1882",
+        "options": [
+          {
+            "option": "websocket",
+            "value": ""
+          }
+        ]
+      },
+      {
         "name": "ctrlx-node-red-flowforge.agent",
-        "url": "/node-red-agent",
+        "url": "/node-red-device",
         "binding": "unix://{$SNAP_DATA}/package-run/ctrlx-node-red-flowforge/ctrlx-node-red-flowforge.agent.sock"
       }
     ]
-  },
-  "commands": {
-    "activeConfiguration": {
-      "load": [
-        {
-          "id": "node-red",
-          "subject": "Node-RED flows",
-          "url": "/node-red-agent/load",
-          "execution": {
-            "method": "POST",
-            "url": "/node-red-agent/load"
-          }
-        }
-      ]
-    }
   },
   "scopes-declaration": [
     {
@@ -90,6 +86,12 @@
             "title": "Dashboard",
             "link": "/node-red/ui",
             "target": "node-red-dashboard",
+            "permissions": []
+          },
+          {
+            "id": "ctrlx-node-red-flowforge.agent",
+            "title": "Device Agent",
+            "link": "/node-red-device",
             "permissions": []
           }
         ]

@@ -4,13 +4,23 @@ const path = require("path");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const { spawn } = require("child_process");
-
 const configYml = "./config.yml";
+
+// Define the path for the Unix socket file
+const socketPath = `unix://${process.env.SNAP_DATA}/package-run/ctrlx-node-red-flowforge/ctrlx-node-red-flowforge.agent.sock`;
+
+// Remove the previous socket file, if it exists
+if (fs.existsSync(socketPath)) {
+  fs.unlinkSync(socketPath);
+}
+
 app.use(express.static(path.join("./")));
+
 // Serve the HTML file when the user navigates to the root URL
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "index.html"));
 });
+
 // Handle form submission to save the configuration
 app.post("/save", function (req, res) {
   let body = "";
@@ -19,7 +29,7 @@ app.post("/save", function (req, res) {
   });
   req.on("end", () => {
     var data = JSON.parse(body);
-    if (data.moduleCache === "true") { 
+    if (data.moduleCache === "true") {
       data.moduleCache = true;
     }
     var yamlData = yaml.dump(data);
@@ -30,16 +40,14 @@ app.post("/save", function (req, res) {
 
 // Start and stop device agent functions
 var processId = null;
-
-
-const configPath = path.join(__dirname, 'config.yml');
-const dirPath = path.join(__dirname, '/flowforge-device');
+const configPath = path.join(__dirname, "config.yml");
+const dirPath = path.join(__dirname, "/flowforge-device");
 
 function startDeviceAgent(req, res) {
   var process = spawn("flowforge-device-agent", [
     "--port=1882",
     `--config=${configPath}`,
-    `--dir=${dirPath}`
+    `--dir=${dirPath}`,
   ]);
 
   process.stdout.on("data", function (data) {
@@ -62,7 +70,6 @@ function startDeviceAgent(req, res) {
   res.send({ processId: processId });
 }
 
-
 function stopDeviceAgent(req, res) {
   const exec = require("child_process").exec;
 
@@ -80,15 +87,18 @@ function stopDeviceAgent(req, res) {
 function resetDeviceAgent(req, res) {
   const exec = require("child_process").exec;
   exec(`kill ${processId}`);
-  exec(`find ${dirPath} -mindepth 1 -maxdepth 1 ! -name module_cache -exec rm -r {} \ +`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(`exec error: ${err}`);
-      return;
+  exec(
+    `find ${dirPath} -mindepth 1 -maxdepth 1 ! -name module_cache -exec rm -r {} \\+`,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.error(`exec error: ${err}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+      console.log(`Reset successful`);
     }
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
-    console.log(`Reset successful`);
-  });
+  );
   res.send("Device agent reset successfully");
 }
 
@@ -97,15 +107,15 @@ app.get("/start", startDeviceAgent);
 app.get("/stop", stopDeviceAgent);
 
 // Endpoint to check the status of the device agent process
-app.get('/status', function (req, res) {
+app.get("/status", function (req, res) {
   if (processId) {
-    res.json({ status: 'running', processId: processId });
+    res.json({ status: "running", processId: processId });
   } else {
-    res.json({ status: 'stopped' });
+    res.json({ status: "stopped" });
   }
 });
 
-// Start the server
-app.listen(8000, function () {
-  console.log("Server started on port 8000");
+// Start the server on the Unix socket
+app.listen(socketPath, function () {
+  console.log(`Server started on socket ${socketPath}`);
 });
