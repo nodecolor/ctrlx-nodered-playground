@@ -15,7 +15,7 @@ architectures:
 apps:
 
   node-red:
-    command: bin/startNR
+    command: bin/startNR && bin/startDA
     daemon: simple
     restart-condition: on-failure
     passthrough:
@@ -100,8 +100,8 @@ parts:
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/node-red-auth-ctrlx-automation | tail -1)
       
       # install device-agent
-      npm install --no-audit --no-fund --prefix $SNAPCRAFT_PART_INSTALL/lib @flowforge/flowforge-device-agent
-      npm install --no-audit --no-fund --prefix $SNAPCRAFT_PART_INSTALL/lib $(npm pack ./configs/additional_modules/device-agent-ui | tail -1)
+      npm install --prefix $SNAPCRAFT_PART_INSTALL/lib @flowforge/flowforge-device-agent
+      npm install --prefix $SNAPCRAFT_PART_INSTALL/lib $(npm pack ./configs/additional_modules/device-agent-ui | tail -1)
 
       # modify node_modules
       find $SNAPCRAFT_PART_INSTALL -type f -name '*.js.swp' -delete
@@ -140,8 +140,9 @@ parts:
     plugin: dump
     source: snap/local/settings # snapcraft now prefers local parts to be in snap/local
     organize:
-      start.sh: "bin/startNR"
+      startNR.sh: "bin/startNR"
       desktop-launch: "bin/desktop-launch"
+      startDA.sh: "bin/startDA"
   configs:
    source: ./configs
    plugin: dump

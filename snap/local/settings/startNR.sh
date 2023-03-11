@@ -24,10 +24,4 @@ echo SETTINGS: $SETTINGS
 echo USERDIR: $USERDIR
 echo ----------------------------------
 
-"$SNAP"/bin/node "$SNAP"/lib/node_modules/.bin/node-red -s "$SETTINGS" -u "$USERDIR" &
-
-echo ----------------------------------
-echo STARTING DEVICE AGENT APP
-echo ----------------------------------
-
-"$SNAP"/bin/node "$SNAP"/lib/node_modules/device-agent-ui/app.js"
+"$SNAP"/bin/node "$SNAP"/lib/node_modules/.bin/node-red -s "$SETTINGS" -u "$USERDIR"
