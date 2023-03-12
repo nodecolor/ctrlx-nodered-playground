@@ -1,5 +1,7 @@
 #!/bin/sh
-while ! snapctl is-connected active-solution do sleep 5 done
+while ! snapctl is-connected active-solution; do
+    sleep 5
+done
 
 set -e
 if [ -z "$PORT" ]; then PORT=1881; fi
