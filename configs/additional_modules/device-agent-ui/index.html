@@ -113,7 +113,7 @@
       });
 
       function saveConfig(formData) {
-        fetch('/save', {
+        fetch('/device-agent/save', {
           method: 'POST',
           body: formData,
           headers: {
@@ -158,7 +158,7 @@
       var startButton = document.getElementById('start-agent-btn');
       startButton.addEventListener('click', () => {
         if (!processId) {
-          fetch('/start')
+          fetch('/device-agent/start')
             .then((response) => {
               if (response.ok) {
                 startButton.textContent = 'Stop Device Agent';
@@ -177,7 +177,7 @@
               console.error('Error starting device agent:', error);
             });
         } else {
-          fetch('/stop')
+          fetch('/device-agent/stop')
             .then((response) => {
               if (response.ok) {
                 startButton.textContent = 'Start Device Agent';
@@ -200,7 +200,7 @@
 
       // Function to check the status of the device agent process
       function checkProcessStatus() {
-        fetch('/status')
+        fetch('/device-agent/status')
           .then((response) => {
             if (response.ok) {
               return response.json();
@@ -253,7 +253,7 @@
         const yesButton = document.createElement('button');
         yesButton.textContent = 'Yes';
         yesButton.addEventListener('click', function () {
-          fetch('/reset')
+          fetch('/device-agent/reset')
             .then((response) => {
               if (response.ok) {
                 startButton.textContent = 'Start Device Agent';
