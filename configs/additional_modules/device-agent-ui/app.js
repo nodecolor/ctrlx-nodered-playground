@@ -32,7 +32,7 @@ app.post('/save', function (req, res) {
 var processId = null;
 
 const configPath = path.join(__dirname, 'config.yml');
-const dirPath = path.join(__dirname, '/flowforge-device');
+const dirPath = path.join(__dirname, '/flowforge-device/');
 
 function startDeviceAgent(req, res) {
   var process = spawn('flowforge-device-agent', [
