@@ -1,2 +1,3 @@
-#!/bin/sh
-sh -c './startNR && ./startDA'
+#!/bin/bash
+./startNR &
+./startDA &

@@ -1,7 +1,5 @@
 #!/bin/sh
-
 set -e
-
 if [ -z "$PORT" ]; then PORT=1881; fi
 export PORT
 
