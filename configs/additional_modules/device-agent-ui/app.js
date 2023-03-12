@@ -5,7 +5,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { spawn } = require('child_process');
 
-const configYml = './config.yml';
+const configPath = path.join(__dirname, 'config.yml');
 app.use('/device-agent/', express.static(path.join(__dirname, './')));
 // Serve the HTML file when the user navigates to the root URL
 app.get('/device-agent/', function (req, res) {
@@ -23,7 +23,7 @@ app.post('/device-agent/save', function (req, res) {
       data.moduleCache = true;
     }
     var yamlData = yaml.dump(data);
-    fs.writeFileSync(configYml, yamlData);
+    fs.writeFileSync(configPath, yamlData);
     res.sendStatus(200);
   });
 });
@@ -31,7 +31,7 @@ app.post('/device-agent/save', function (req, res) {
 // Start and stop device agent functions
 var processId = null;
 
-const configPath = path.join(__dirname, 'config.yml');
+
 const dirPath = path.join(__dirname, '/flowforge-device/');
 
 function startDeviceAgent(req, res) {
