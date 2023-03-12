@@ -146,7 +146,7 @@
         }
       }
 
-      const yamlUrl = '/var/snap/ctrlx-node-red-flowforge/x1/solutions/activeConfiguration/device-agent/config.yml';
+      const yamlUrl = `${process.env.SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`;
 
       fetch(yamlUrl)
         .then((response) => response.text())
