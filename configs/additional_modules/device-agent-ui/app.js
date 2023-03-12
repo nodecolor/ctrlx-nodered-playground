@@ -5,7 +5,7 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { spawn } = require('child_process');
 
-const configPath = path.join(__dirname, 'config.yml');
+const configPath = `${$SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`;
 app.use('/device-agent/', express.static(path.join(__dirname, './')));
 // Serve the HTML file when the user navigates to the root URL
 app.get('/device-agent/', function (req, res) {
@@ -32,7 +32,7 @@ app.post('/device-agent/save', function (req, res) {
 var processId = null;
 
 
-const dirPath = path.join(__dirname, '/flowforge-device/');
+const dirPath = `${$SNAP_DATA}/solutions/activeConfiguration/device-agent/flowforge-device/`;
 
 function startDeviceAgent(req, res) {
   var process = spawn(`${$SNAP}/bin/node`, [

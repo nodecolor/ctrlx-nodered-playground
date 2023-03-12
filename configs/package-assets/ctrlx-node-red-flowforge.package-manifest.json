@@ -124,6 +124,13 @@
         "icon": "bosch-ic-directory",
         "scopes": [],
         "copyOnLoad": true
+      },
+      {
+        "name": "device-agent",
+        "description": "Node-RED Device Agent",
+        "icon": "bosch-ic-directory",
+        "scopes": [],
+        "copyOnLoad": true
       }
     ]
   },

@@ -146,7 +146,7 @@
         }
       }
 
-      const yamlUrl = './config.yml';
+      const yamlUrl = `${$SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`;
 
       fetch(yamlUrl)
         .then((response) => response.text())

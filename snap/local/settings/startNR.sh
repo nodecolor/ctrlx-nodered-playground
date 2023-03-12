@@ -14,6 +14,9 @@ fi
 
 USERDIR=$SNAP_DATA/solutions/activeConfiguration/node-RED
 
+cp "$SNAP"/lib/node_modules/device-agent-ui/config.yml "$SNAP_DATA"/solutions/activeConfiguration/device-agent/config.yml
+cp -r "$SNAP"/lib/node_modules/device-agent-ui/flowforge-device/ "$SNAP_DATA"/solutions/activeConfiguration/device-agent/flowforge-device/
+
 echo ----------------------------------
 echo STARTING NODE-RED APP
 echo ----------------------------------
