@@ -36,7 +36,7 @@ const dirPath = path.join(__dirname, '/flowforge-device/');
 
 function startDeviceAgent(req, res) {
   var process = spawn(`${$SNAP}/bin/node`, [
-    `${$SNAP}/lib/node_modules/device-agent-ui/node_modules/.bin/flowforge-device-agent`,
+    `${$SNAP}/lib/node_modules/.bin/flowforge-device-agent`,
     '--port=1882',
     `--config=${configPath}`,
     `--dir=${dirPath}`,
