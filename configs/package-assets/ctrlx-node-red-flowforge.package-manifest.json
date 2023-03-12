@@ -24,7 +24,7 @@
       },
       {
         "name": "ctrlx-device-agent-flowforge.web",
-        "url": "/device-agent",
+        "url": "/ui",
         "binding": ":1882",
         "options": [
           {
@@ -35,7 +35,7 @@
       },
       {
         "name": "ctrlx-device-agent-flowforge-config.web",
-        "url": "/node-red-configuration",
+        "url": "/",
         "binding": ":1883",
         "options": [
           {
