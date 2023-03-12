@@ -146,7 +146,7 @@
         }
       }
 
-      const yamlUrl = require(`${process.env.SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`);
+      const yamlUrl = file("SNAP_DATA") + "solutions/activeConfiguration/device-agent/flowforge-device/config.yml";
 
       fetch(yamlUrl)
         .then((response) => response.text())
