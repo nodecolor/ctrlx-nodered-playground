@@ -146,7 +146,7 @@
         }
       }
 
-      const yamlUrl = `${process.env.SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`;
+      const yamlUrl = require(`${process.env.SNAP_DATA}/solutions/activeConfiguration/device-agent/config.yml`);
 
       fetch(yamlUrl)
         .then((response) => response.text())
