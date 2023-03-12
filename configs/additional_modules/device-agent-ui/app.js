@@ -12,7 +12,7 @@ app.get('/device-agent/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 // Handle form submission to save the configuration
-app.post('/save', function (req, res) {
+app.post('/device-agent/save', function (req, res) {
   let body = '';
   req.on('data', (chunk) => {
     body += chunk.toString();
@@ -93,12 +93,12 @@ function resetDeviceAgent(req, res) {
   res.send('Device agent reset successfully');
 }
 
-app.get('/reset', resetDeviceAgent);
-app.get('/start', startDeviceAgent);
-app.get('/stop', stopDeviceAgent);
+app.get('/device-agent/reset', resetDeviceAgent);
+app.get('/device-agent/start', startDeviceAgent);
+app.get('/device-agent/stop', stopDeviceAgent);
 
 // Endpoint to check the status of the device agent process
-app.get('/status', function (req, res) {
+app.get('/device-agent/status', function (req, res) {
   if (processId) {
     res.json({ status: 'running', processId: processId });
   } else {
