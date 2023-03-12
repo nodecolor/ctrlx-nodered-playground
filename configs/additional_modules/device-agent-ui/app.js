@@ -35,11 +35,13 @@ const configPath = path.join(__dirname, 'config.yml');
 const dirPath = path.join(__dirname, '/flowforge-device/');
 
 function startDeviceAgent(req, res) {
-  var process = spawn('flowforge-device-agent', [
+  var process = spawn(`${$SNAP}/bin/node`, [
+    `${$SNAP}/lib/node_modules/device-agent-ui/node_modules/.bin/flowforge-device-agent`,
     '--port=1882',
     `--config=${configPath}`,
     `--dir=${dirPath}`,
   ]);
+
 
   process.stdout.on('data', function (data) {
     console.log(data.toString());
