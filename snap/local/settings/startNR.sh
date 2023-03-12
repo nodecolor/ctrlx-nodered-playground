@@ -1,4 +1,6 @@
 #!/bin/sh
+while ! snapctl is-connected active-solution do sleep 5 done
+
 set -e
 if [ -z "$PORT" ]; then PORT=1881; fi
 export PORT
@@ -14,6 +16,7 @@ fi
 
 USERDIR=$SNAP_DATA/solutions/activeConfiguration/node-RED
 
+mkdir "$SNAP_DATA"/solutions/activeConfiguration/device-agent/
 cp "$SNAP"/lib/node_modules/device-agent-ui/config.yml "$SNAP_DATA"/solutions/activeConfiguration/device-agent/config.yml
 cp -r "$SNAP"/lib/node_modules/device-agent-ui/flowforge-device/ "$SNAP_DATA"/solutions/activeConfiguration/device-agent/flowforge-device/
 
