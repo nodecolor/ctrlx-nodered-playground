@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
 const configYml = './config.yml';
 app.use(express.static(path.join('./')));
 // Serve the HTML file when the user navigates to the root URL
-app.get('/', function (req, res) {
+app.get('/device-agent', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 // Handle form submission to save the configuration
