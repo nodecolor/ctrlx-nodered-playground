@@ -36,7 +36,7 @@ app.post('/device-agent/save', function (req, res) {
 var processId = null;
 
 
-const dirPath = path.join(process.env.SNAP_DATA,"solutions/activeConfiguration/device-agent/flowforge-device/");
+const dirPath = path.join(process.env.SNAP_DATA,"solutions/activeConfiguration/device-agent/flowforge-device");
 
 
 function startDeviceAgent(req, res) {
