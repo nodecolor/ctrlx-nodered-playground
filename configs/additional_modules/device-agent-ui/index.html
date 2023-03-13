@@ -101,10 +101,11 @@
     <script src="./app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script>
-      var form = document.getElementById('config-form');
-      form.addEventListener('submit', (e) => {
+      var saveButton = document.getElementById('save-config');
+      saveButton.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        var form = document.getElementById('config-form');
         var formData = new FormData(form);
         var plainFormData = Object.fromEntries(formData.entries());
         var jsonFormData = JSON.stringify(plainFormData);
