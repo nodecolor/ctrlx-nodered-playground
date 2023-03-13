@@ -5,7 +5,12 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { spawn } = require('child_process');
 
-const configPath = path.join(process.env.SNAP_DATA,"solutions/activeConfiguration/device-agent/flowforge-device/config.yml");
+app.get('/device-agent/', (req, res) => {
+  var configPath = path.join(process.env.SNAP_DATA, "solutions/activeConfiguration/device-agent/flowforge-device/config.yml");
+  res.render('index', { yamlUrl: configPath });
+});
+
+var configPath = path.join(process.env.SNAP_DATA,"solutions/activeConfiguration/device-agent/flowforge-device/config.yml");
 app.use('/device-agent/', express.static(path.join(__dirname, './')));
 // Serve the HTML file when the user navigates to the root URL
 app.get('/device-agent/', function (req, res) {
