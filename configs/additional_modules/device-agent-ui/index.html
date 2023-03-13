@@ -1,267 +1,291 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <base href="/device-agent/">
+    <title>FlowForge Device Agent</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
 
-<head>
-  <base href="/device-agent/">
-  <title>FlowForge Device Agent</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" />
-  <link rel="stylesheet" href="./style.css" />
-</head>
-
-<body>
-  <div class="wrapper">
-    <div class="container">
-      <h1>
-        <img src="./images/flowforge-logo.png" alt="FlowForge Logo" class="logo" />FlowForge Device Agent Configuration
-      </h1>
-      <form id="config-form" action="#">
-        <div class="input-row">
-          <label for="deviceId">Device ID:</label>
-          <input type="text" id="deviceId" name="deviceId" value="" />
-        </div>
-        <div class="input-row">
-          <label for="token">Token:</label>
-          <input type="text" id="token" name="token" value="" />
-        </div>
-        <div class="input-row">
-          <label for="credentialSecret">Credential Secret:</label>
-          <input type="password" id="credentialSecret" name="credentialSecret" value="" />
-        </div>
-        <div class="input-row">
-          <label for="forgeURL">Forge URL:</label>
-          <input type="text" id="forgeURL" name="forgeURL" value="" />
-        </div>
-        <div class="input-row">
-          <label for="brokerURL">Broker URL:</label>
-          <input type="text" id="brokerURL" name="brokerURL" value="" />
-        </div>
-        <div class="input-row">
-          <label for="brokerUsername">Broker Username:</label>
-          <input type="text" id="brokerUsername" name="brokerUsername" value="" />
-        </div>
-        <div class="input-row">
-          <label for="brokerPassword">Broker Password:</label>
-          <input type="password" id="brokerPassword" name="brokerPassword" value="" />
-        </div>
-        <div class="input-row checkbox-row">
-          <input type="checkbox" id="moduleCache" name="moduleCache" value="true" />
-          <label for="moduleCache"><a
-              href="https://github.com/flowforge/flowforge-device-agent#running-with-no-access-to-npmjsorg"
-              target="_blank">Enable Module Cache</a></label>
-        </div>
-        <div class="button-row">
-          <input type="submit" id="save-config" value="Save Configuration" />
-          <button id="start-agent-btn">Start Device Agent</button>
-        </div>
-      </form>
-    </div>
-    <br />
-    <div class="container">
-      <div class="info-box" id="info-box">
-        Node-RED Device Agent is not running. <br />
-        More information about FlowForge Devices can be found
-        <a href="https://flowforge.com/docs/user/devices/" target="_blank">here</a>.
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <h1>
+          <img
+            src="./images/flowforge-logo.png"
+            alt="FlowForge Logo"
+            class="logo"
+          />FlowForge Device Agent Configuration
+        </h1>
+        <form id="config-form" action="#">
+          <div class="input-row">
+            <label for="deviceId">Device ID:</label>
+            <input type="text" id="deviceId" name="deviceId" value="" />
+          </div>
+          <div class="input-row">
+            <label for="token">Token:</label>
+            <input type="text" id="token" name="token" value="" />
+          </div>
+          <div class="input-row">
+            <label for="credentialSecret">Credential Secret:</label>
+            <input
+              type="password"
+              id="credentialSecret"
+              name="credentialSecret"
+              value=""
+            />
+          </div>
+          <div class="input-row">
+            <label for="forgeURL">Forge URL:</label>
+            <input type="text" id="forgeURL" name="forgeURL" value="" />
+          </div>
+          <div class="input-row">
+            <label for="brokerURL">Broker URL:</label>
+            <input type="text" id="brokerURL" name="brokerURL" value="" />
+          </div>
+          <div class="input-row">
+            <label for="brokerUsername">Broker Username:</label>
+            <input
+              type="text"
+              id="brokerUsername"
+              name="brokerUsername"
+              value=""
+            />
+          </div>
+          <div class="input-row">
+            <label for="brokerPassword">Broker Password:</label>
+            <input
+              type="password"
+              id="brokerPassword"
+              name="brokerPassword"
+              value=""
+            />
+          </div>
+          <div class="input-row checkbox-row">
+            <input
+              type="checkbox"
+              id="moduleCache"
+              name="moduleCache"
+              value="true"
+            />
+            <label for="moduleCache"
+              ><a
+                href="https://github.com/flowforge/flowforge-device-agent#running-with-no-access-to-npmjsorg"
+                target="_blank"
+                >Enable Module Cache</a
+              ></label
+            >
+          </div>
+          <div class="button-row">
+            <input type="submit" id="save-config" value="Save Configuration" />
+            <button id="start-agent-btn">Start Device Agent</button>
+          </div>
+        </form>
       </div>
       <br />
-      <button id="reset-agent-btn">Reset Device Agent</button>
+      <div class="container">
+        <div class="info-box" id="info-box">
+          Node-RED Device Agent is not running. <br />
+          More information about FlowForge Devices can be found
+          <a href="https://flowforge.com/docs/user/devices/" target="_blank"
+            >here</a
+          >.
+        </div>
+        <br />
+        <button id="reset-agent-btn">Reset Device Agent</button>
+      </div>
     </div>
-  </div>
-  <script src="./app.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-  <script>
-    var form = document.getElementById('config-form');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
+    <script src="./app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script>
+      var form = document.getElementById('config-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-      var formData = new FormData(form);
-      var plainFormData = Object.fromEntries(formData.entries());
-      var jsonFormData = JSON.stringify(plainFormData);
+        var formData = new FormData(form);
+        var plainFormData = Object.fromEntries(formData.entries());
+        var jsonFormData = JSON.stringify(plainFormData);
 
-      saveConfig(jsonFormData);
-    });
+        saveConfig(jsonFormData);
+      });
 
-    function saveConfig(formData) {
-      fetch('/device-agent/save', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((response) => {
-          document.getElementById('info-box').textContent =
-            'Config saved successfully';
-          console.log('Config saved successfully');
+      function saveConfig(formData) {
+        fetch('/device-agent/save', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'application/json',
+          },
         })
-        .catch((error) => {
-          console.error('Error saving config: ', error);
-        });
-    }
-
-    function populateConfigForm(configData) {
-      document.getElementById('deviceId').value = configData.deviceId;
-      document.getElementById('token').value = configData.token;
-      document.getElementById('credentialSecret').value =
-        configData.credentialSecret;
-      document.getElementById('forgeURL').value = configData.forgeURL;
-      document.getElementById('brokerURL').value = configData.brokerURL;
-      document.getElementById('brokerUsername').value =
-        configData.brokerUsername;
-      document.getElementById('brokerPassword').value =
-        configData.brokerPassword;
-      if (configData.moduleCache === true) {
-        document.getElementById('moduleCache').checked = true;
+          .then((response) => {
+            document.getElementById('info-box').textContent =
+              'Config saved successfully';
+            console.log('Config saved successfully');
+          })
+          .catch((error) => {
+            console.error('Error saving config: ', error);
+          });
       }
-    }
 
-    const yamlUrl = '{{ yamlUrl }}';
+      function populateConfigForm(configData) {
+        document.getElementById('deviceId').value = configData.deviceId;
+        document.getElementById('token').value = configData.token;
+        document.getElementById('credentialSecret').value =
+          configData.credentialSecret;
+        document.getElementById('forgeURL').value = configData.forgeURL;
+        document.getElementById('brokerURL').value = configData.brokerURL;
+        document.getElementById('brokerUsername').value =
+          configData.brokerUsername;
+        document.getElementById('brokerPassword').value =
+          configData.brokerPassword;
+        if (configData.moduleCache === true) {
+          document.getElementById('moduleCache').checked = true;
+        }
+      }
 
-    fetch(yamlUrl)
-      .then((response) => response.text())
-      .then((yamlData) => {
-        var configData = jsyaml.load(yamlData);
-        populateConfigForm(configData);
+      //const yamlUrl = configPath;
+
+      fetch('/device-agent/config.yml')
+        .then((response) => response.text())
+        .then((yamlData) => {
+          var configData = jsyaml.load(yamlData);
+          populateConfigForm(configData);
+        });
+
+      var startButton = document.getElementById('start-agent-btn');
+      startButton.addEventListener('click', () => {
+        if (!processId) {
+          fetch('/device-agent/start')
+            .then((response) => {
+              if (response.ok) {
+                startButton.textContent = 'Stop Device Agent';
+                startButton.classList.add('stop');
+                document.getElementById('info-box').textContent =
+                  'Device Agent is running';
+                processId = response.processId; // or however you store the process ID
+              } else {
+                console.error(
+                  'Error starting device agent:',
+                  response.statusText
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('Error starting device agent:', error);
+            });
+        } else {
+          fetch('/device-agent/stop')
+            .then((response) => {
+              if (response.ok) {
+                startButton.textContent = 'Start Device Agent';
+                startButton.classList.remove('stop');
+                document.getElementById('info-box').innerHTML =
+                  'Node-RED Device Agent is not running. <br> More information about FlowForge Devices can be found <a href="https://flowforge.com/docs/user/devices/" target="_blank">here</a>.';
+                processId = null;
+              } else {
+                console.error(
+                  'Error stopping device agent:',
+                  response.statusText
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('Error stopping device agent:', error);
+            });
+        }
       });
 
-    fetch(yamlUrl)
-      .then((response) => response.text())
-      .then((yamlData) => {
-        var configData = jsyaml.load(yamlData);
-        populateConfigForm(configData);
-      });
-
-    var startButton = document.getElementById('start-agent-btn');
-    startButton.addEventListener('click', () => {
-      if (!processId) {
-        fetch('/device-agent/start')
+      // Function to check the status of the device agent process
+      function checkProcessStatus() {
+        fetch('/device-agent/status')
           .then((response) => {
             if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Error getting process status');
+            }
+          })
+          .then((data) => {
+            if (data.status === 'running') {
               startButton.textContent = 'Stop Device Agent';
               startButton.classList.add('stop');
               document.getElementById('info-box').textContent =
                 'Device Agent is running';
-              processId = response.processId; // or however you store the process ID
+              //document.getElementById('info-box').classList.add('active');
+              //infoBox.classList.add('active');
+              processId = data.processId;
             } else {
-              console.error(
-                'Error starting device agent:',
-                response.statusText
-              );
-            }
-          })
-          .catch((error) => {
-            console.error('Error starting device agent:', error);
-          });
-      } else {
-        fetch('/device-agent/stop')
-          .then((response) => {
-            if (response.ok) {
               startButton.textContent = 'Start Device Agent';
               startButton.classList.remove('stop');
               document.getElementById('info-box').innerHTML =
                 'Node-RED Device Agent is not running. <br> More information about FlowForge Devices can be found <a href="https://flowforge.com/docs/user/devices/" target="_blank">here</a>.';
+              //infoBox.classList.remove('active');
               processId = null;
-            } else {
-              console.error(
-                'Error stopping device agent:',
-                response.statusText
-              );
             }
           })
           .catch((error) => {
-            console.error('Error stopping device agent:', error);
+            console.error(error);
           });
       }
-    });
+      // Check the status of the device agent process on page reload
+      window.addEventListener('load', checkProcessStatus);
+      // Check the status of the device agent process every 5 seconds
+      setInterval(checkProcessStatus, 10000);
 
-    // Function to check the status of the device agent process
-    function checkProcessStatus() {
-      fetch('/device-agent/status')
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Error getting process status');
-          }
-        })
-        .then((data) => {
-          if (data.status === 'running') {
-            startButton.textContent = 'Stop Device Agent';
-            startButton.classList.add('stop');
-            document.getElementById('info-box').textContent =
-              'Device Agent is running';
-            //document.getElementById('info-box').classList.add('active');
-            //infoBox.classList.add('active');
-            processId = data.processId;
-          } else {
-            startButton.textContent = 'Start Device Agent';
-            startButton.classList.remove('stop');
-            document.getElementById('info-box').innerHTML =
-              'Node-RED Device Agent is not running. <br> More information about FlowForge Devices can be found <a href="https://flowforge.com/docs/user/devices/" target="_blank">here</a>.';
-            //infoBox.classList.remove('active');
-            processId = null;
-          }
-        })
-        .catch((error) => {
-          console.error(error);
+      // Function to reset button dialog
+      const resetButton = document.getElementById('reset-agent-btn');
+
+      resetButton.addEventListener('click', function () {
+        const confirmationModalBackdrop = document.createElement('div');
+        confirmationModalBackdrop.classList.add('confirmation-modal-backdrop');
+
+        const confirmationModalBox = document.createElement('div');
+        confirmationModalBox.classList.add('confirmation-modal-box');
+
+        const confirmationMessage = document.createTextNode(
+          'Are you sure you want to reset the agent?'
+        );
+        confirmationModalBox.appendChild(confirmationMessage);
+
+        const yesButton = document.createElement('button');
+        yesButton.textContent = 'Yes';
+        yesButton.addEventListener('click', function () {
+          fetch('/device-agent/reset')
+            .then((response) => {
+              if (response.ok) {
+                startButton.textContent = 'Start Device Agent';
+                startButton.classList.remove('stop');
+                document.getElementById('info-box').textContent =
+                  'Reset was successful.';
+                processId = null;
+              } else {
+                console.error(
+                  'Error reseting device agent:',
+                  response.statusText
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('Error reseting device agent:', error);
+            });
+          confirmationModalBackdrop.remove();
         });
-    }
-    // Check the status of the device agent process on page reload
-    window.addEventListener('load', checkProcessStatus);
-    // Check the status of the device agent process every 5 seconds
-    setInterval(checkProcessStatus, 10000);
+        confirmationModalBox.appendChild(yesButton);
 
-    // Function to reset button dialog
-    const resetButton = document.getElementById('reset-agent-btn');
+        const noButton = document.createElement('button');
+        noButton.textContent = 'No';
+        noButton.addEventListener('click', function () {
+          // If the user clicks "No", close the confirmation dialog
+          confirmationModalBackdrop.remove();
+        });
+        confirmationModalBox.appendChild(noButton);
 
-    resetButton.addEventListener('click', function () {
-      const confirmationModalBackdrop = document.createElement('div');
-      confirmationModalBackdrop.classList.add('confirmation-modal-backdrop');
-
-      const confirmationModalBox = document.createElement('div');
-      confirmationModalBox.classList.add('confirmation-modal-box');
-
-      const confirmationMessage = document.createTextNode(
-        'Are you sure you want to reset the agent?'
-      );
-      confirmationModalBox.appendChild(confirmationMessage);
-
-      const yesButton = document.createElement('button');
-      yesButton.textContent = 'Yes';
-      yesButton.addEventListener('click', function () {
-        fetch('/device-agent/reset')
-          .then((response) => {
-            if (response.ok) {
-              startButton.textContent = 'Start Device Agent';
-              startButton.classList.remove('stop');
-              document.getElementById('info-box').textContent =
-                'Reset was successful.';
-              processId = null;
-            } else {
-              console.error(
-                'Error reseting device agent:',
-                response.statusText
-              );
-            }
-          })
-          .catch((error) => {
-            console.error('Error reseting device agent:', error);
-          });
-        confirmationModalBackdrop.remove();
+        confirmationModalBackdrop.appendChild(confirmationModalBox);
+        document.body.appendChild(confirmationModalBackdrop);
       });
-      confirmationModalBox.appendChild(yesButton);
-
-      const noButton = document.createElement('button');
-      noButton.textContent = 'No';
-      noButton.addEventListener('click', function () {
-        // If the user clicks "No", close the confirmation dialog
-        confirmationModalBackdrop.remove();
-      });
-      confirmationModalBox.appendChild(noButton);
-
-      confirmationModalBackdrop.appendChild(confirmationModalBox);
-      document.body.appendChild(confirmationModalBackdrop);
-    });
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>
