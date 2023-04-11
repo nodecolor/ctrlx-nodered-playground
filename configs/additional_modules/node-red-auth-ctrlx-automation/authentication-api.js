@@ -199,7 +199,7 @@ module.exports = {
     }
   
     var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
-    //var license2 = 'SWL_XCR_ENGINEERING_4H';
+    var license2 = 'SWL_XCR_ENGINEERING_4H';
   
     var checkCounter = 0;
     function onSuccess() {
@@ -215,6 +215,6 @@ module.exports = {
     }
   
     checkLicense(license1, token, onSuccess, onError);
-    checkLicense(license2, token, onSuccess, onError);
+    //checkLicense(license2, token, onSuccess, onError);
   },  
 };
