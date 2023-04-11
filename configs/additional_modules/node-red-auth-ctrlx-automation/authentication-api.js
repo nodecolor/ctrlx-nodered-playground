@@ -210,7 +210,7 @@ module.exports = {
   
     function onError() {
       checkCounter++;
-      if (checkCounter === 2) {
+      if (checkCounter === 1) {
         const log = new JournalD();
         log.warning("No valid Node-RED license is installed or the current license has expired.");
         callback(false);
