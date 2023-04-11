@@ -2,10 +2,7 @@ const https = require('https');
 const jwtdecode = require('jwt-decode');
 
 module.exports = {
-  //checkPermissions checks the Node-RED permissions and returns a valid user or null if access denied
   checkPermissions: function (token, callback) {
-    //console.log('checkPermissions:', token);
-
     var jwt;
     try {
       jwt = jwtdecode(token);
@@ -70,10 +67,7 @@ module.exports = {
     callback(user);
   },
 
-  //validate validates a given token and returns true if token valid, else false
   validate: function (token, callback) {
-    //console.log('validate:', token);
-
     var options = {
       hostname: 'localhost',
       path: '/identity-manager/api/v1/auth/token/validity',
@@ -84,7 +78,6 @@ module.exports = {
         authorization: 'Bearer ' + token,
       },
     };
-
     var req = https.request(options, (res) => {
       let chunks = [];
 
@@ -95,8 +88,6 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-
-          //console.log('validation result:', JSON.stringify(jsonObject));
 
           if (jsonObject.valid === true) {
             module.exports.checkPermissions(token, callback);
@@ -114,15 +105,11 @@ module.exports = {
     req.end();
   },
 
-  //authenticate checks the username and password and returns a new valid token or null for unknown users
   authenticate: function (username, password, callback) {
-    //console.log('authenticate:', username);
-
     var data = JSON.stringify({
       name: username,
       password: password,
     });
-  
     var options = {
       hostname: 'localhost',
       path: '/identity-manager/api/v2/auth/token',
@@ -132,7 +119,7 @@ module.exports = {
         'Content-Length': data.length,
       },
     };
-  
+
     var req = https.request(options, (res) => {
       let chunks = [];
       res
@@ -142,7 +129,8 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-          if (res.statusCode === 200) { // Check if status code is 200, which means success
+          if (res.statusCode === 200) {
+            // Check if status code is 200, which means success
             module.exports.license(jsonObject.access_token, (valid) => {
               if (valid === true) {
                 module.exports.checkPermissions(
@@ -154,7 +142,7 @@ module.exports = {
               }
             });
           } else {
-            let errorMessage = 'Login failed.';
+            let errorMessage = 'User login failed.';
             if (jsonObject.error_description) {
               errorMessage = jsonObject.error_description;
             }
@@ -162,12 +150,14 @@ module.exports = {
           }
         });
     });
-  
+
     req.on('error', (error) => {
       console.error(error);
-      callback({ error: 'An error occurred during the authentication process.' });
+      callback({
+        error: 'An error occurred during the authentication process.',
+      });
     });
-  
+
     req.write(data);
     req.end();
   },
@@ -178,7 +168,7 @@ module.exports = {
         name: licenseName,
         version: '1.0',
       });
-  
+
       var options = {
         hostname: 'localhost',
         path: '/license-manager/api/v1/license',
@@ -189,7 +179,7 @@ module.exports = {
           Authorization: 'Bearer ' + token,
         },
       };
-  
+
       var req = https.request(options, (res) => {
         if (res.statusCode === 200) {
           successCallback();
@@ -197,31 +187,31 @@ module.exports = {
           errorCallback();
         }
       });
-  
+
       req.on('error', (error) => {
         errorCallback();
       });
-  
+
       req.write(payload);
       req.end();
     }
-  
+
     var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
     var license2 = 'SWL_XCR_ENGINEERING_4H';
-  
+
     var checkCounter = 0;
     function onSuccess() {
       callback(true);
     }
-  
+
     function onError() {
       checkCounter++;
       if (checkCounter === 1) {
         callback(false);
       }
     }
-  
+
     checkLicense(license1, token, onSuccess, onError);
     //checkLicense(license2, token, onSuccess, onError);
-  },  
+  },
 };
