@@ -1,7 +1,5 @@
 const https = require('https');
 const jwtdecode = require('jwt-decode');
-const logging = require('systemd-journald');
-const { JournalD } = logging;
 
 module.exports = {
   //checkPermissions checks the Node-RED permissions and returns a valid user or null if access denied
@@ -124,7 +122,7 @@ module.exports = {
       name: username,
       password: password,
     });
-
+  
     var options = {
       hostname: 'localhost',
       path: '/identity-manager/api/v2/auth/token',
@@ -134,7 +132,7 @@ module.exports = {
         'Content-Length': data.length,
       },
     };
-
+  
     var req = https.request(options, (res) => {
       let chunks = [];
       res
@@ -144,24 +142,32 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-          module.exports.license(jsonObject.access_token, (valid) => {
-            if (valid === true) {
-              module.exports.checkPermissions(
-                jsonObject.access_token,
-                callback
-              );
-            } else {
-              callback(null);
+          if (res.statusCode === 200) { // Check if status code is 200, which means success
+            module.exports.license(jsonObject.access_token, (valid) => {
+              if (valid === true) {
+                module.exports.checkPermissions(
+                  jsonObject.access_token,
+                  callback
+                );
+              } else {
+                callback({ error: 'License validation failed.' });
+              }
+            });
+          } else {
+            let errorMessage = 'Login failed.';
+            if (jsonObject.error_description) {
+              errorMessage = jsonObject.error_description;
             }
-          });
+            callback({ error: errorMessage });
+          }
         });
     });
-
+  
     req.on('error', (error) => {
       console.error(error);
-      callback(null);
+      callback({ error: 'An error occurred during the authentication process.' });
     });
-
+  
     req.write(data);
     req.end();
   },
@@ -211,8 +217,6 @@ module.exports = {
     function onError() {
       checkCounter++;
       if (checkCounter === 1) {
-        const log = new JournalD();
-        log.warning("No valid Node-RED license is installed or the current license has expired.");
         callback(false);
       }
     }
