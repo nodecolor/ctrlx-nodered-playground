@@ -1,7 +1,7 @@
 name: ctrlx-node-red-flowforge
 adopt-info: node-red
-summary: Node-RED managed by FlowForge
-description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see http://nodered.org
+summary: Node-RED with Enterprise Support
+description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see https://flowforge.com/node-red/.
 confinement: strict
 grade: stable
 base: core20
@@ -99,9 +99,6 @@ parts:
       # install auth module
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install --production $(npm pack ./configs/additional_modules/node-red-auth-ctrlx-automation | tail -1)
       
-      # install device-agent
-      npm install --prefix $SNAPCRAFT_PART_INSTALL/lib $(npm pack ./configs/additional_modules/device-agent-ui | tail -1)
-
       # modify node_modules
       find $SNAPCRAFT_PART_INSTALL -type f -name '*.js.swp' -delete
       find $SNAPCRAFT_PART_INSTALL/lib/node_modules -type d -name test -prune -exec rm -rf {} \;
@@ -139,7 +136,7 @@ parts:
     plugin: dump
     source: snap/local/settings # snapcraft now prefers local parts to be in snap/local
     organize:
-      startNR.sh: "bin/startNR"
+      start.sh: "bin/startNR"
       desktop-launch: "bin/desktop-launch"
   configs:
    source: ./configs

@@ -165,37 +165,56 @@ module.exports = {
   },
 
   license: function (token, callback) {
-    //change name of your license here
-    var payload = JSON.stringify({
-      name: 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN',
-      version: '1.0',
-    });
-
-    var options = {
-      hostname: 'localhost',
-      //socketPath: '$SNAP_DATA/licensing-service/licensing-service.sock',
-      path: '/license-manager/api/v1/license',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': payload.length,
-        Authorization: 'Bearer ' + token,
-      },
-    };
-
-    var req = https.request(options, (res) => {
-      if (res.statusCode === 200) {
-        callback(true);
-      } else {
+    function checkLicense(licenseName, token, successCallback, errorCallback) {
+      var payload = JSON.stringify({
+        name: licenseName,
+        version: '1.0',
+      });
+  
+      var options = {
+        hostname: 'localhost',
+        path: '/license-manager/api/v1/license',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': payload.length,
+          Authorization: 'Bearer ' + token,
+        },
+      };
+  
+      var req = https.request(options, (res) => {
+        if (res.statusCode === 200) {
+          successCallback();
+        } else {
+          errorCallback();
+        }
+      });
+  
+      req.on('error', (error) => {
+        errorCallback();
+      });
+  
+      req.write(payload);
+      req.end();
+    }
+  
+    var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
+    //var license2 = 'SWL_XCR_ENGINEERING_4H';
+  
+    var checkCounter = 0;
+    function onSuccess() {
+      callback(true);
+    }
+  
+    function onError() {
+      checkCounter++;
+      if (checkCounter === 2) {
+        console.info("No valid license is installed or the current license has expired.");
         callback(false);
       }
-    });
-
-    req.on('error', (error) => {
-      callback(false);
-    });
-
-    req.write(payload);
-    req.end();
-  },
+    }
+  
+    checkLicense(license1, token, onSuccess, onError);
+    checkLicense(license2, token, onSuccess, onError);
+  },  
 };

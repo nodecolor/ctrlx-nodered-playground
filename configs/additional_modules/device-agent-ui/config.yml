@@ -1,8 +1,0 @@
-deviceId: nq431Brg5d
-token: ffd_nJeJKzcbDFvbnSBhQjoOklzjxgHNffHSfN_tfsem3vc
-credentialSecret: 4d196cc0da74df474db437ec48a56fff5d7bf0424ee1bede594a25ccbd73ee0e
-forgeURL: https://app.flowforge.com
-brokerURL: wss://mqtt.flowforge.cloud
-brokerUsername: device:dV6vA1pvqx:nq431Brg5d
-brokerPassword: ffbd_fxoj6Hdaj_kN8RQy04VcHTSYXKSLN7FckDCeA1xyxdI
-moduleCache: true

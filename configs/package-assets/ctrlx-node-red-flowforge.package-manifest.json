@@ -13,30 +13,8 @@
     "proxyMapping": [
       {
         "name": "ctrlx-node-red-flowforge.web",
-        "url": "/node-red/",
+        "url": "/node-red",
         "binding": ":1881",
-        "options": [
-          {
-            "option": "websocket",
-            "value": ""
-          }
-        ]
-      },
-      {
-        "name": "ctrlx-device-agent-flowforge.web",
-        "url": "/ui/",
-        "binding": ":1882",
-        "options": [
-          {
-            "option": "websocket",
-            "value": ""
-          }
-        ]
-      },
-      {
-        "name": "ctrlx-device-agent-flowforge-config.web",
-        "url": "/device-agent/",
-        "binding": ":1883",
         "options": [
           {
             "option": "websocket",
@@ -76,7 +54,7 @@
           {
             "id": "node-red-admin",
             "title": "Flow Editor",
-            "link": "/node-red/",
+            "link": "/node-red",
             "target": "node-red-admin",
             "permissions": []
           },
@@ -90,15 +68,8 @@
           {
             "id": "node-red-dashboard",
             "title": "Dashboard",
-            "link": "/node-red/ui/",
+            "link": "/node-red/ui",
             "target": "node-red-dashboard",
-            "permissions": []
-          },
-          {
-            "id": "ctrlx-device-agent-flowforge-config.web",
-            "title": "Device Agent",
-            "link": "/device-agent/",
-            "target": "ctrlx-device-agent-flowforge-config.web",
             "permissions": []
           }
         ]
@@ -110,7 +81,7 @@
         "id": "node-red-dashboard",
         "title": "Node-RED Dashboard",
         "icon": "ctrlx-ic-node-red",
-        "link": "/node-red/ui/",
+        "link": "/node-red/ui",
         "target": "node-red-dashboard",
         "permissions": []
       }
@@ -121,13 +92,6 @@
       {
         "name": "node-red",
         "description": "Node-RED",
-        "icon": "bosch-ic-directory",
-        "scopes": [],
-        "copyOnLoad": true
-      },
-      {
-        "name": "device-agent",
-        "description": "Node-RED Device Agent",
         "icon": "bosch-ic-directory",
         "scopes": [],
         "copyOnLoad": true
