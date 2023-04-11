@@ -13,7 +13,7 @@ module.exports = {
         // properties 'username' and 'permissions'
         var user = {
           username: username,
-          permissions: '*'
+          permissions: '*',
         };
         resolve(user);
       } else {
@@ -27,20 +27,20 @@ module.exports = {
       // Do whatever work is needed to check token is valid
       api.validate(token, (user) => {
         resolve(user);
-      })
+      });
     });
   },
   authenticate: function (username, password) {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       // Do whatever work is needed to validate the username/password
       // combination.
       api.authenticate(username, password, (user) => {
-        if (user.error) {
-          resolve({error: user.error});
+        if (user && user.error) {
+          reject(user.error);
         } else {
           resolve(user);
         }
-      })
+      });
     });
   },
   default: function () {
@@ -50,5 +50,5 @@ module.exports = {
       // resolve({anonymous: true, permissions:'read'});
       resolve(null);
     });
-  }
-}
+  },
+};

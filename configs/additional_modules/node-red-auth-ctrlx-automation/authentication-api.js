@@ -110,6 +110,7 @@ module.exports = {
       name: username,
       password: password,
     });
+  
     var options = {
       hostname: 'localhost',
       path: '/identity-manager/api/v2/auth/token',
@@ -119,7 +120,7 @@ module.exports = {
         'Content-Length': data.length,
       },
     };
-
+  
     var req = https.request(options, (res) => {
       let chunks = [];
       res
@@ -129,8 +130,7 @@ module.exports = {
         .on('end', function () {
           let data = Buffer.concat(chunks);
           let jsonObject = JSON.parse(data);
-          if (res.statusCode === 200) {
-            // Check if status code is 200, which means success
+          if (res.statusCode === 200) { 
             module.exports.license(jsonObject.access_token, (valid) => {
               if (valid === true) {
                 module.exports.checkPermissions(
@@ -142,7 +142,7 @@ module.exports = {
               }
             });
           } else {
-            let errorMessage = 'User login failed.';
+            let errorMessage = 'Login failed.';
             if (jsonObject.error_description) {
               errorMessage = jsonObject.error_description;
             }
@@ -150,17 +150,16 @@ module.exports = {
           }
         });
     });
-
+  
     req.on('error', (error) => {
       console.error(error);
-      callback({
-        error: 'An error occurred during the authentication process.',
-      });
+      callback({ error: 'An error occurred during the authentication process.' });
     });
-
+  
     req.write(data);
     req.end();
   },
+  
 
   license: function (token, callback) {
     function checkLicense(licenseName, token, successCallback, errorCallback) {
