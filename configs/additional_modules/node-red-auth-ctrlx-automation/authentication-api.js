@@ -1,5 +1,7 @@
 const https = require('https');
 const jwtdecode = require('jwt-decode');
+const logging = require('systemd-journald');
+const { JournalD } = logging;
 
 module.exports = {
   //checkPermissions checks the Node-RED permissions and returns a valid user or null if access denied
@@ -199,7 +201,7 @@ module.exports = {
     }
   
     var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
-    //var license2 = 'SWL_XCR_ENGINEERING_4H';
+    var license2 = 'SWL_XCR_ENGINEERING_4H';
   
     var checkCounter = 0;
     function onSuccess() {
@@ -209,12 +211,13 @@ module.exports = {
     function onError() {
       checkCounter++;
       if (checkCounter === 2) {
-        console.info("No valid license is installed or the current license has expired.");
+        const log = new JournalD();
+        log.warning("No valid Node-RED license is installed or the current license has expired.");
         callback(false);
       }
     }
   
     checkLicense(license1, token, onSuccess, onError);
-    checkLicense(license2, token, onSuccess, onError);
+    //checkLicense(license2, token, onSuccess, onError);
   },  
 };
