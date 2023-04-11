@@ -70,6 +70,7 @@ parts:
     build-packages:
       - libatomic1
       - build-essential
+      - libsystemd-dev
     override-build: | # Whatever steps needed to install node-red into the install folder, which gets incorporated into the snap
       PATH=$PATH:../npm/bin
       
