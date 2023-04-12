@@ -5,8 +5,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "https": "^1.0.0",
-    "jwt-decode": "^3.1.2",
-    "systemd-journald": "^2.0.0"
+    "jwt-decode": "^3.1.2"
   },
   "main": "./user-authentication.js"
 }
