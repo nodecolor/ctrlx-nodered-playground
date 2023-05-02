@@ -1,6 +1,5 @@
 name: ctrlx-node-red-flowforge
 title: Node-RED
-adopt-info: node-red
 version: 3.0.2
 summary: Node-RED by FlowForge
 description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see https://flowforge.com/node-red/
