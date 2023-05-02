@@ -1,7 +1,9 @@
 name: ctrlx-node-red-flowforge
+title: Node-RED
 adopt-info: node-red
-summary: Node-RED with Enterprise Support
-description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see https://flowforge.com/node-red/.
+version: 3.0.2
+summary: Node-RED by FlowForge
+description: Node-RED is a flow based programming application for wiring together hardware devices, APIs and online services in new and interesting ways. For more information see https://flowforge.com/node-red/
 confinement: strict
 grade: stable
 base: core20
@@ -70,7 +72,6 @@ parts:
     build-packages:
       - libatomic1
       - build-essential
-      - libsystemd-dev
     override-build: | # Whatever steps needed to install node-red into the install folder, which gets incorporated into the snap
       PATH=$PATH:../npm/bin
       
@@ -89,6 +90,11 @@ parts:
       npx nrlint --init > $SNAPCRAFT_PART_INSTALL/lib/.nrlintrc.js
 
       # install factory shipped library nodes
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-omron-fins
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-mcprotocol
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-modbus
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-buffer-parser
+      npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-contrib-s7
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-ping 
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-random 
       npm --prefix $SNAPCRAFT_PART_INSTALL/lib install node-red-node-serialport 
@@ -129,10 +135,10 @@ parts:
       cd $SNAPCRAFT_PART_INSTALL/lib
       npm init --yes
 
-      #set snap version
-      VER=$(npm show node-red version)
-      echo "VERSION $(npm show node-red version)"
-      snapcraftctl set-version $VER
+      #set snap version; at present, the Rexroth tests necessitate a fixed version specified in the app's meta description.
+      #VER=$(npm show node-red version)
+      #echo "VERSION $(npm show node-red version)"
+      #snapcraftctl set-version $VER
   settings:
     plugin: dump
     source: snap/local/settings # snapcraft now prefers local parts to be in snap/local
