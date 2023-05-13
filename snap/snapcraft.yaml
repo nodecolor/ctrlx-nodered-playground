@@ -34,7 +34,6 @@ apps:
       - removable-media
       - active-solution
       - licensing-service
-      - home
     slots:
       - package-run
       - package-assets
@@ -43,7 +42,6 @@ apps:
   npm:
     command: bin/npm
     plugs:
-      - home
       - network
 
   desktop-launch:

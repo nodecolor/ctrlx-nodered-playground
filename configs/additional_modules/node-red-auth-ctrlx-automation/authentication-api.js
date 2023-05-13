@@ -183,11 +183,20 @@ module.exports = {
       };
   
       var req = https.request(options, (res) => {
-        if (res.statusCode === 200) {
-          successCallback();
-        } else {
-          errorCallback();
-        }
+        let data = '';
+  
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+  
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            let parsedData = JSON.parse(data);
+            successCallback(parsedData.id);
+          } else {
+            errorCallback();
+          }
+        });
       });
   
       req.on('error', (error) => {
@@ -198,11 +207,35 @@ module.exports = {
       req.end();
     }
   
+    function releaseLicense(id, token, errorCallback) {
+      var options = {
+        hostname: 'localhost',
+        path: '/license-manager/api/v1/license/' + id,
+        method: 'DELETE',
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      };
+  
+      var req = https.request(options, (res) => {
+        if (res.statusCode !== 200) {
+          errorCallback();
+        }
+      });
+  
+      req.on('error', (error) => {
+        errorCallback();
+      });
+  
+      req.end();
+    }
+  
     var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
     var license2 = 'SWL_XCR_ENGINEERING_4H';
   
     var checkCounter = 0;
-    function onSuccess() {
+    function onSuccess(id) {
+      releaseLicense(id, token, onError);
       callback(true);
     }
   
