@@ -170,7 +170,7 @@ module.exports = {
         name: licenseName,
         version: '1.0',
       });
-  
+
       var options = {
         hostname: 'localhost',
         path: '/license-manager/api/v1/license',
@@ -181,14 +181,14 @@ module.exports = {
           Authorization: 'Bearer ' + token,
         },
       };
-  
+
       var req = https.request(options, (res) => {
         let data = '';
-  
+
         res.on('data', (chunk) => {
           data += chunk;
         });
-  
+
         res.on('end', () => {
           if (res.statusCode === 200) {
             let parsedData = JSON.parse(data);
@@ -198,16 +198,16 @@ module.exports = {
           }
         });
       });
-  
+
       req.on('error', (error) => {
         errorCallback();
       });
-  
+
       req.write(payload);
       req.end();
     }
-  
-    function releaseLicense(id, token, errorCallback) {
+
+    function releaseLicense(id, token) {
       var options = {
         hostname: 'localhost',
         path: '/license-manager/api/v1/license/' + id,
@@ -216,38 +216,36 @@ module.exports = {
           Authorization: 'Bearer ' + token,
         },
       };
-  
-      var req = https.request(options, (res) => {
-        if (res.statusCode !== 200) {
-          errorCallback();
-        }
-      });
-  
+
+      var req = https.request(options);
+
       req.on('error', (error) => {
-        errorCallback();
+        console.error(`Error releasing license: ${error.message}`);
       });
-  
+
       req.end();
     }
-  
+
     var license1 = 'SWL-W-XCx-NREDxFLOWxxxxxx-Y1NN';
     var license2 = 'SWL_XCR_ENGINEERING_4H';
-  
+
     var checkCounter = 0;
     function onSuccess(id) {
       releaseLicense(id, token, onError);
       callback(true);
     }
-  
+
     function onError() {
       checkCounter++;
       if (checkCounter === 2) {
-        log.warning("No valid Node-RED license is installed or the current license has expired.");
+        log.warning(
+          'No valid Node-RED license is installed or the current license has expired.'
+        );
         callback(false);
       }
     }
-  
+
     checkLicense(license1, token, onSuccess, onError);
     checkLicense(license2, token, onSuccess, onError);
-  },  
+  },
 };
