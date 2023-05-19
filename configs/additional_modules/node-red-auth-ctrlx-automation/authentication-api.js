@@ -17,7 +17,7 @@ module.exports = {
     access = '';
 
     jwt.scope.forEach((element) => {
-      if (access == '' && element == 'ctrlx-node-red-flowforge.web.r') {
+      if (access == '' && element == 'ctrlx-flowforge-node-red.web.r') {
         access = 'read';
         user = {
           username: jwt.name,
@@ -25,7 +25,7 @@ module.exports = {
         };
       } else if (
         access == '' &&
-        element == 'ctrlx-node-red-flowforge.web.rwx'
+        element == 'ctrlx-flowforge-node-red.web.rwx'
       ) {
         access = '*';
         user = {
@@ -40,14 +40,14 @@ module.exports = {
         };
       } else if (
         access == 'read' &&
-        element == 'ctrlx-node-red-flowforge.web.rwx'
+        element == 'ctrlx-flowforge-node-red.web.rwx'
       ) {
         access = '*';
         user = {
           username: jwt.name,
           permissions: access,
         };
-      } else if (access == '*' && element == 'ctrlx-node-red-flowforge.web.r') {
+      } else if (access == '*' && element == 'ctrlx-flowforge-node-red.web.r') {
         access = '*';
         user = {
           username: jwt.name,

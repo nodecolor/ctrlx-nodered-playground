@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.boschrexroth.com/ctrlx-automation/ctrlx-core/apps/package-manifest/package-manifest.v1.schema.json",
   "version": "3.0.2",
-  "id": "ctrlx-node-red-flowforge",
+  "id": "ctrlx-flowforge-node-red",
   "certificatestores": [
     {
       "id": "node-red",
@@ -12,7 +12,7 @@
   "services": {
     "proxyMapping": [
       {
-        "name": "ctrlx-node-red-flowforge.web",
+        "name": "ctrlx-flowforge-node-red.web",
         "url": "/node-red",
         "binding": ":1881",
         "options": [
@@ -26,17 +26,17 @@
   },
   "scopes-declaration": [
     {
-      "identifier": "ctrlx-node-red-flowforge.web",
+      "identifier": "ctrlx-flowforge-node-red.web",
       "name": "Node-RED",
       "description": "Node-RED permissions",
       "scopes": [
         {
-          "identifier": "ctrlx-node-red-flowforge.web.rwx",
+          "identifier": "ctrlx-flowforge-node-red.web.rwx",
           "name": "Manage Node-RED ",
           "description": ""
         },
         {
-          "identifier": "ctrlx-node-red-flowforge.web.r",
+          "identifier": "ctrlx-flowforge-node-red.web.r",
           "name": "View Node-RED",
           "description": ""
         }
